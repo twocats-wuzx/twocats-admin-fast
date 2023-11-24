@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>菜单管理</title>
+    <link rel="stylesheet" th:href="@{/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/css/public.css}" media="all">
+    <style>
+        .layui-btn:not(.layui-btn-lg ):not(.layui-btn-sm):not(.layui-btn-xs) {
+            height: 34px;
+            line-height: 34px;
+            padding: 0 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <blockquote class="layui-elem-quote">
+            Layui的树形表格treeTable，支持异步加载(懒加载)、复选框联动、折叠状态记忆。<br>
+            <a href="https://gitee.com/whvse/treetable-lay" target="_blank" class="layui-btn layui-btn-danger">treetable-lay</a>
+        </blockquote>
+        <div>
+            <div>
+                <button class="layui-btn layui-btn-normal" id="btn-add">新增</button>
+                <button class="layui-btn layui-btn-warm" id="btn-export">导出</button>
+                <button class="layui-btn layui-btn-danger" id="btn-query">删除</button>
+            </div>
+            <table id="menu-table" class="layui-table" lay-filter="menu-table"></table>
+        </div>
+    </div>
+</div>
+<!-- 操作列 -->
+<script type="text/html" id="auth-state">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script th:src="@{/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+<script th:src="@{/js/lay-config.js?v=1.0.4}" charset="utf-8"></script>
+<script th:inline="none">
+    layui.use(['table', 'treetable'], function () {
+        let $ = layui.jquery;
+        let table = layui.table;
+        let treeTable = layui.treetable;
+
+        let queryData =  function (){
+            layer.load(2);
+            $.ajax({
+                url: "/api/menu/list",
+                type: "post",
+                contentType: "application/json",
+                data: JSON.stringify({
+
+                }),
+                success: function(res){
+                    renderTable(res.data);
+                },
+                error: function (xhr, a, error) {
+                    layer.closeAll('loading');
+                    layer.msg(error)
+                }
+            })
+        }
+
+        let renderTable = function (data) {
+            // 渲染表格
+            treeTable.render({
+                data: data,
+                treeColIndex: 1,
+                treeSpid: -1,
+                treeIdName: 'id',
+                treePidName: 'pid',
+                elem: '#menu-table',
+                page: false,
+                cols: [[
+                    {type: 'numbers'},
+                    {type: 'checkbox'},
+                    {field: 'title', minWidth: 200, title: '标题'},
+                    {field: 'authority', title: '权限标识'},
+                    {field: 'href', title: '菜单url'},
+                    {field: 'sort', width: 80, align: 'center', title: '排序'},
+                    {
+                        field: 'type', width: 80, align: 'center', templet: function (menu) {
+                            if (menu.type === 'MENU') {
+                                return '<span class="layui-badge layui-bg-blue">目录</span>';
+                            }
+                            if (menu.type === 'PERMISSION') {
+                                return '<span class="layui-badge-rim">权限</span>';
+                            }
+                        }, title: '类型'
+                    },
+                    {templet: '#auth-state', width: 120, align: 'center', title: '操作'}
+                ]],
+                done: function () {
+                    layer.closeAll('loading');
+                }
+            });
+        }
+
+        /*$('#btn-expand').click(function () {
+            treetable.expandAll('#munu-table');
+        });
+
+        $('#btn-fold').click(function () {
+            treetable.foldAll('#munu-table');
+        });*/
+
+        //监听工具条
+        table.on('tool(menu-table)', function (obj) {
+            let data = obj.data;
+            let layEvent = obj.event;
+
+            if (layEvent === 'del') {
+                layer.msg('删除' + data.id);
+            }
+            if (layEvent === 'edit') {
+                layer.msg('修改' + data.id);
+            }
+        });
+
+        queryData()
+    });
+</script>
+</body>
+</html>
