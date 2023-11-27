@@ -710,6 +710,8 @@
 
 .layuimini-menu-left .layui-nav-more:before,.layuimini-menu-left-zoom .layui-nav-more:before {
     content: "\e61a";
+    line-height: 55px;
+    font-size: 16px;
 }
 .layuimini-menu-left .layui-nav-itemed > a > .layui-nav-more,.layuimini-menu-left-zoom .layui-nav-itemed > a > .layui-nav-more {
     transform: rotate(180deg);

@@ -2,7 +2,6 @@ package tech.twocats.admin.module.system.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
@@ -13,11 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tech.twocats.admin.module.system.domain.vo.InitVO;
 import tech.twocats.admin.module.user.domain.dto.UserDetailDTO;
-import tech.twocats.admin.module.user.domain.entity.User;
 import tech.twocats.admin.module.user.domain.vo.MenuVO;
 import tech.twocats.admin.module.user.service.IMenuService;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -60,7 +57,7 @@ public class BaseController {
     @RequestMapping(value = {"/welcome"})
     @PreAuthorize("@authCheck.check('dashbroad')")
     public String welcomeView() {
-        return "/view/dashboard/welcome-1";
+        return "view/dashboard/welcome";
     }
 
     @ResponseBody

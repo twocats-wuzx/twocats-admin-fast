@@ -4,10 +4,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tech.twocats.admin.common.model.Result;
 import tech.twocats.admin.module.user.domain.dto.UserDetailDTO;
+import tech.twocats.admin.module.user.domain.vo.MenuQuery;
 import tech.twocats.admin.module.user.domain.vo.MenuVO;
 import tech.twocats.admin.module.user.service.IMenuService;
 
@@ -30,7 +32,7 @@ public class MenuController {
     @ResponseBody
     @PostMapping("/api/menu/list")
     @PreAuthorize("@authCheck.check('menu:list')")
-    public Result<List<MenuVO>> getMenuList(){
-        return Result.ok(menuService.getMenus());
+    public Result<List<MenuVO>> getMenuList(@RequestBody MenuQuery query){
+        return Result.ok(menuService.getMenus(query));
     }
 }

@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 public class Result<T> {
 
-    private static final Error SUCCESS = new Error(20000, "请求成功");
+    private static final Error SUCCESS = new Error(0, "请求成功");
 
     private int code;
     private String msg;

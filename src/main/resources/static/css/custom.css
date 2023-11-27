@@ -1,0 +1,17 @@
+/* 表格组件 */
+.layui-table {
+    margin: 5px 0;
+}
+
+/* 表单组件 */
+.layui-input, .layui-select, .layui-textarea {
+    height: 33px;
+}
+
+
+/* 按钮组件 */
+.layui-btn:not(.layui-btn-lg ):not(.layui-btn-sm):not(.layui-btn-xs) {
+    height: 30px;
+    line-height: 30px;
+    padding: 0 16px;
+}

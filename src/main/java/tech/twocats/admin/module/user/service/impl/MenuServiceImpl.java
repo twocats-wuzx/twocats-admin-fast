@@ -3,10 +3,12 @@ package tech.twocats.admin.module.user.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import tech.twocats.admin.common.enums.MenuTypeEnum;
 import tech.twocats.admin.module.user.domain.entity.Menu;
 import tech.twocats.admin.module.user.domain.entity.RoleMenu;
 import tech.twocats.admin.module.user.domain.entity.UserRole;
+import tech.twocats.admin.module.user.domain.vo.MenuQuery;
 import tech.twocats.admin.module.user.domain.vo.MenuVO;
 import tech.twocats.admin.module.user.mapper.MenuMapper;
 import org.springframework.stereotype.Service;
@@ -54,16 +56,19 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
         List<Menu> menus = ChainWrappers.lambdaQueryChain(this.getBaseMapper())
                 .in(!isSuperAdmin, Menu::getId, menuIds)
                 .eq(Menu::getType, MenuTypeEnum.MENU)
-                .orderByAsc(Menu::getPid, Menu::getSort)
+                .orderByAsc(Menu::getPid)
+                .orderByAsc(Menu::getSort)
                 .list();
         return toMenuTree(menus);
     }
 
     @Override
-    public List<MenuVO> getMenus() {
+    public List<MenuVO> getMenus(MenuQuery query) {
         List<Menu> menus = ChainWrappers.lambdaQueryChain(this.getBaseMapper())
                 .ne(Menu::getAuthority, "ADMIN")
-                .orderByAsc(Menu::getPid, Menu::getSort)
+                .like(StringUtils.hasLength(query.getTitle()), Menu::getTitle, query.getTitle())
+                .orderByAsc(Menu::getPid)
+                .orderByAsc(Menu::getSort)
                 .list();
         return menus.stream().map(MenuVO::new).collect(Collectors.toList());
     }
