@@ -1,0 +1,87 @@
+<!-- 搜索功能 -->
+<div th:fragment="search_html">
+    <form class="layui-form layui-row layui-col-space16">
+        <div class="layui-col-md4">
+            <div class="layui-input-wrap">
+                <input type="text" name="title" value="" placeholder="菜单标题" class="layui-input" lay-affix="clear">
+            </div>
+        </div>
+        <div class="layui-btn-container layui-col-md8">
+            <button class="layui-btn" lay-submit lay-filter="table-search">搜索</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </form>
+</div>
+
+<!-- 单行表格数据操作功能 -->
+<script type="text/html" id="table-line-operate" th:fragment="table_line_operate">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<!-- 表格工具栏功能 -->
+<script type="text/html" id="table-tool-bar" th:fragment="table_tool_bar">
+    <button class="layui-btn table-bth layui-btn-normal" lay-event="add" >新增</button>
+    <button class="layui-btn table-bth layui-btn-warm" lay-event="export" >导出</button>
+    <button class="layui-btn table-bth layui-btn-danger" lay-event="delete" >删除</button>
+</script>
+
+<!-- 表格图标 -->
+<script type="text/html" id="title_icon"  th:fragment="title_icon">
+    <i class="{{d.icon}}"></i>
+</script>
+
+<!-- 新增或编辑数据功能 -->
+<div th:fragment="add_or_update_html" id="add_or_update" style="display: none">
+    <form class="layui-form add-or-update-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">标题</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" lay-verify="required" placeholder="请输入菜单标题" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div id="icon-picker"></div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">权限标识</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" placeholder="请输入权限标识" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">父级菜单</label>
+            <div class="layui-input-block">
+                <input type="text" id="pid" name="pid" placeholder="请选择上级分类" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">路由地址</label>
+            <div class="layui-input-block">
+                <input type="text" name="href" placeholder="请输入菜单URL" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">打开方式</label>
+            <label class="layui-input-inline">
+                <select name="target">
+                    <option value="SELF" selected>当前页面</option>
+                    <option value="BLANK">新页面</option>
+                </select>
+            </label>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">菜单类型</label>
+            <label class="layui-input-inline">
+                <select name="type">
+                    <option value="MENU" selected>菜单</option>
+                    <option value="PERMISSION">权限</option>
+                </select>
+            </label>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">菜单顺序</label>
+            <div class="layui-input-inline" style="width: 100px;">
+                <input type="number" name="sort" placeholder="" autocomplete="off" class="layui-input" min="0" step="1" lay-affix="number">
+            </div>
+        </div>
+    </form>
+</div>

@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tech.twocats.admin.common.model.Result;
-import tech.twocats.admin.module.system.domain.vo.LoginRequest;
-import tech.twocats.admin.module.user.domain.entity.User;
+import tech.twocats.admin.module.user.domain.vo.LoginRequest;
 import tech.twocats.admin.module.user.service.IUserService;
 import tech.twocats.admin.util.AuthExceptionUtil;
 
@@ -53,10 +52,10 @@ public class LoginController {
     @PostMapping("/api/login")
     public Result<Void> login(@RequestBody LoginRequest loginRequest,
                               HttpServletRequest request,
-                              HttpServletResponse response,
-                              HttpSession httpSession){
+                              HttpServletResponse response){
         UsernamePasswordAuthenticationToken token =
-                UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.getUsername(), loginRequest.getPassword());
+                UsernamePasswordAuthenticationToken
+                        .unauthenticated(loginRequest.getUsername(), loginRequest.getPassword());
         try {
             Authentication authentication  = this.normalAuthenticationManager.authenticate(token);
             SecurityContext context = securityContextHolderStrategy.createEmptyContext();
@@ -78,7 +77,8 @@ public class LoginController {
     public Result<Void> adminLogin(@RequestBody LoginRequest loginRequest,
                               HttpServletRequest request, HttpServletResponse response){
         UsernamePasswordAuthenticationToken token =
-                UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.getUsername(), loginRequest.getPassword());
+                UsernamePasswordAuthenticationToken
+                        .unauthenticated(loginRequest.getUsername(), loginRequest.getPassword());
         try {
             Authentication authentication  = this.normalAuthenticationManager.authenticate(token);
             SecurityContext context = securityContextHolderStrategy.createEmptyContext();

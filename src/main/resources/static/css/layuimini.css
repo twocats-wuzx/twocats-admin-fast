@@ -16,16 +16,16 @@
 
 /**logo-配色*/
 .layui-layout-admin .layuimini-logo {
-    background-color: #243346 !important;
+    background-color: #263a52 !important;
 }
 
 /**左侧-配色*/
 .layui-side.layui-bg-black, .layui-side.layui-bg-black > .layuimini-menu-left > ul {
-    background-color: #2f4056 !important;
+    background-color: #263a52 !important;
 }
 
 .layuimini-menu-left .layui-nav .layui-nav-child a:hover:not(.layui-this) {
-    background-color: #3b3f4b;
+    background-color: #263a52;
 }
 
 /**左侧菜单选中-配色*/

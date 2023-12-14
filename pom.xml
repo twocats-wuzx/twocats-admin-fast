@@ -25,6 +25,7 @@
         <common.io.version>2.13.0</common.io.version>
         <lombok.version>1.18.28</lombok.version>
         <oshi.core.version>6.4.6</oshi.core.version>
+        <selenium.version>4.13.0</selenium.version>
 
         <knife4j.version>4.3.0</knife4j.version>
 

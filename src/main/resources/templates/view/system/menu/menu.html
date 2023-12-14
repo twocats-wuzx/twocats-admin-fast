@@ -5,17 +5,15 @@
     <title>菜单管理</title>
     <link rel="stylesheet" th:href="@{/lib/layui-v2.8.18/css/layui.css}" media="all">
     <link rel="stylesheet" th:href="@{/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <link rel="stylesheet" th:href="@{/js/lay-module/treeSelect/treeSelect.css}" media="all">
     <link rel="stylesheet" th:href="@{/css/public.css}" media="all">
     <link rel="stylesheet" th:href="@{/css/custom.css}" media="all">
     <style>
-        .icon-style {
-            font-size: 20px;
-            margin-right: 3px;
-        }
-        .table-bth:not(.layui-btn-lg ):not(.layui-btn-sm):not(.layui-btn-xs)  {
-            height: 30px;
-            line-height: 30px;
-            padding: 0 16px;
+        .icon-style { font-size: 20px; margin-right: 3px; }
+        .table-bth:not(.layui-btn-lg ):not(.layui-btn-sm):not(.layui-btn-xs)  {height: 30px;line-height: 30px;padding: 0 16px;}
+        .add-or-update-form{margin: 40px 30px; }
+        .layui-form-label{
+            border-right: 12px;
         }
     </style>
 </head>
@@ -23,37 +21,42 @@
 <div class="layuimini-container">
     <div class="layuimini-main">
         <div>
-            <th:block th:replace="view/system/menu/search::search_html"/>
-            <div>
-                <button class="layui-btn table-bth layui-btn-normal" style="" id="btn-add">新增</button>
-                <button class="layui-btn table-bth layui-btn-warm" id="btn-export">导出</button>
-                <button class="layui-btn table-bth layui-btn-danger" id="btn-query">删除</button>
-            </div>
+            <th:block th:replace="view/system/menu/control::search_html"/>
             <table id="menu-table" class="layui-table" lay-filter="menu-table"></table>
         </div>
     </div>
 </div>
-<!-- 操作列 -->
-<script type="text/html" id="auth-state">
-    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">修改</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-</script>
 
-<script type="text/html" id="icon">
-    <i class="{{d.icon}}"></i>
-</script>
+<th:block th:replace="view/system/menu/control::add_or_update_html"/>
+
+<th:block th:replace="view/system/menu/control::table_tool_bar"/>
+<th:block th:replace="view/system/menu/control::table_line_operate"/>
+<th:block th:replace="view/system/menu/control::title_icon"/>
 
 <script th:src="@{/lib/layui-v2.8.18/layui.js}" charset="utf-8"></script>
-
+<script th:src="@{/js/lay-config.js}" charset="utf-8"></script>
 <script th:inline="javascript">
-    layui.use(function () {
+    layui.use(['jquery', 'layer', 'treeTable','form', 'treeSelect'], function () {
         let $ = layui.jquery
         let layer = layui.layer
         let treeTable = layui.treeTable
-        let form = layui.form;
+        let form = layui.form
+        let treeSelect = layui.treeSelect
+
+        let title = $("input[name='title']").val().trim()
+
+        // 渲染树状搜索框
+        console.log(treeSelect)
+        treeSelect.render({
+            elem: "#pid",
+            data: [{ "id": 4, "title": "售后", "spread": true, "children": [{ "id": 6, "title": "售后进度", "spread": false, "children": null }, { "id": 5, "title": "售后类型", "spread": false, "children": null }] }, { "id": 3, "title": "经销商", "spread": true, "children": null }, { "id": 1, "title": "销售", "spread": true, "children": [{ "id": 2, "title": "订单类型", "spread": false, "children": null }] }],
+            search: true
+            // method: "GET",
+            // datakey: "data"
+        });
 
         // 渲染表格
-        let renderTable = treeTable.render({
+        treeTable.render({
             url: '/api/menu/list',
             method: 'post',
             contentType: 'application/json',
@@ -65,6 +68,15 @@
                     "data": res.data
                 }
             },
+            where: {
+                'title': title
+            },
+            request: {
+                pageName: 'pageSize',
+                limitName: 'pageNo'
+            },
+            toolbar: '#table-tool-bar',
+            defaultToolbar: [],
             tree: {
                 customName: {
                     id: 'id',
@@ -84,10 +96,10 @@
             elem: '#menu-table',
             page: false,
             cols: [ [
-                {type: 'numbers'},
+                {type: 'numbers', title: '序号'},
                 {type: 'checkbox'},
                 {field: 'title', width: 200, title: '标题'},
-                {field: 'icon', width: 50, title: '图标', templet: '#icon'},
+                {field: 'icon', width: 50, title: '图标', templet: '#title_icon', align: 'center'},
                 {field: 'authority', title: '权限标识'},
                 {field: 'href', title: '菜单url'},
                 {field: 'sort', width: 80, align: 'center', title: '排序'},
@@ -101,14 +113,43 @@
                         }
                     }, title: '类型'
                 },
-                {templet: '#auth-state', width: 120, align: 'center', title: '操作'}
+                {templet: '#table-line-operate', width: 120, align: 'center', title: '操作'}
             ] ],
             done: function () {
-                layer.closeAll('loading');
+                layer.closeAll('loading')
             }
         });
 
-        //监听工具条
+        // 搜索栏操作
+        form.on('submit(table-search)', function(data){
+            title = $("input[name='title']").val().trim();
+            // 执行搜索重载
+            treeTable.reload('menu-table', {
+                where: {
+                    "title": title
+                }
+            });
+            return false
+        })
+
+        // 工具栏操作
+        treeTable.on('toolbar(menu-table)', function (obj) {
+            if (obj.event === 'add') {
+                let index = layer.open({
+                    title: ['添加菜单', 'font-size: 20px;'],
+                    type: 1,
+                    shade: 0.2,
+                    resize: false,
+                    content: $('#add_or_update'),
+                })
+            }
+            if (obj.event === 'delete') {
+                let checkStatus = treeTable.checkStatus('menu-table')
+                let data = checkStatus.data
+            }
+        })
+
+        // 单行数据操作
         treeTable.on('tool(menu-table)', function (obj) {
             let data = obj.data;
             let layEvent = obj.event;
@@ -119,19 +160,9 @@
             if (layEvent === 'edit') {
                 layer.msg('修改' + data.id);
             }
-        });
+        })
 
-        // 搜索
-        form.on('submit(table-search)', function(data){
-            let title = $("input[name='title']").val().trim();
-            // 执行搜索重载
-            treeTable.reload('menu-table', {
-                where: {
-                    "title": title
-                }
-            });
-            return false;
-        });
+
     });
 </script>
 </body>

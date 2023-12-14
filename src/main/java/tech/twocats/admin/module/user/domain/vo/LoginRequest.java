@@ -1,4 +1,4 @@
-package tech.twocats.admin.module.system.domain.vo;
+package tech.twocats.admin.module.user.domain.vo;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,3 +1,19 @@
+.layui-layout-admin .layuimini-logo img {
+    display: inline-block;
+    height: 35px;
+    vertical-align: middle;
+}
+
+.layui-layout-admin .layuimini-logo h1 {
+    display: inline-block;
+    margin: 0 0 0 12px;
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 18px;
+    font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
+    vertical-align: middle;
+}
+
 /* 表格组件 */
 .layui-table {
     margin: 5px 0;
@@ -8,10 +24,61 @@
     height: 33px;
 }
 
-
 /* 按钮组件 */
 .layui-btn:not(.layui-btn-lg ):not(.layui-btn-sm):not(.layui-btn-xs) {
     height: 30px;
     line-height: 30px;
     padding: 0 16px;
+}
+.layui-btn {
+    border-radius: 4px;
+}
+/* 菜单栏宽度 */
+.layui-nav {
+    background-color: #414e59;
+}
+.layui-layout-admin .layui-side {
+    top: 60px;
+    width: 248px;
+    overflow-x: hidden;
+}
+.layui-nav.layui-nav-tree {
+    width: 248px;
+    padding: 0;
+}
+@media screen and (max-width: 1024px){
+    .layuimini-all .layui-layout-admin .layuimini-menu-left, .layuimini-all .layui-header .layuimini-logo {
+        left: -248px;
+        transition: left .2s;
+        top: 0;
+        z-index: 1002;
+    }
+    .layuimini-mini .layui-layout-admin .layuimini-menu-left, .layuimini-mini .layui-header .layuimini-logo {
+        left: 0;
+        transition: left .2s;
+        z-index: 1001 !important;
+    }
+}
+.layuimini-menu-left .layui-nav .layui-nav-item a {
+    height: 45px;
+    line-height: 45px;
+    padding-right: 30px;
+}
+
+/* Logo栏宽度 */
+.layui-layout-admin .layui-logo {
+    width: 248px;
+}
+
+.layuimini-tool {
+    left: 260px;
+}
+@media screen and (min-width: 1025px){
+    .layuimini-mini .layuimini-tool {
+        left: 75px !important;
+    }
+}
+
+.layui-body {
+    left: 260px;
 }
