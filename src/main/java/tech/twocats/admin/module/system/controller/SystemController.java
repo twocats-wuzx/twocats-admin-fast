@@ -8,12 +8,12 @@ public class SystemController {
 
     @RequestMapping("/system/manager/role")
     public String roleManagerView(){
-        return "/view/system/role/role";
+        return "view/system/role/role";
     }
 
     @RequestMapping("/system/manager/user")
     public String userManagerView(){
-        return "/view/system/user/user";
+        return "view/system/user/user";
     }
 
 }

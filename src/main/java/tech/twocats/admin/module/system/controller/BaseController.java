@@ -11,9 +11,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tech.twocats.admin.module.system.domain.vo.InitVO;
-import tech.twocats.admin.module.user.domain.dto.UserDetailDTO;
-import tech.twocats.admin.module.user.domain.vo.MenuVO;
-import tech.twocats.admin.module.user.service.IMenuService;
+import tech.twocats.admin.module.admin.domain.dto.UserDetailDTO;
+import tech.twocats.admin.module.admin.domain.vo.MenuVO;
+import tech.twocats.admin.module.admin.service.IMenuService;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class BaseController {
         model.addAttribute("name", StringUtils.hasLength(userDetail.getRealName())
                 ? userDetail.getRealName()
                 : userDetail.getNickname());
-        return "/index";
+        return "index";
     }
 
     /**

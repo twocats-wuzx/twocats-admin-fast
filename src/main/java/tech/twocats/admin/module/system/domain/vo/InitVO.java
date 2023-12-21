@@ -3,7 +3,7 @@ package tech.twocats.admin.module.system.domain.vo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
-import tech.twocats.admin.module.user.domain.vo.MenuVO;
+import tech.twocats.admin.module.admin.domain.vo.MenuVO;
 
 import java.util.List;
 

@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan(basePackages = {"tech.twocats.admin.module.user.mapper"})
+@MapperScan(basePackages = {"tech.twocats.admin.module.admin.mapper"})
 public class AppMain {
 
     public static void main(String[] args) {

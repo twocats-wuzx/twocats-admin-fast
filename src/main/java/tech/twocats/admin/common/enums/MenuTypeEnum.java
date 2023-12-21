@@ -27,4 +27,6 @@ public enum MenuTypeEnum implements IEnum<String>{
     public String getValue() {
         return name();
     }
+
+
 }

@@ -58,10 +58,19 @@ layui.define(['tree', 'jquery'], function (exports) {
         },//选中回调
         selectBy: "all",//all：全部可选，fu:可选有子节点的节点，zi：只能选最后一级节点
         search: false,//启用搜索框
-        customName: null,// Tree组件中常用自动名称
+        customName: {
+            id: 'id',
+            title: 'title',
+            children: 'children'
+        },// Tree组件中常用自动名称
         done: function () {
         },//渲染完成回调
+        text: {
+            defaultNodeName: '不进行选择', // 节点默认名称
+            none: '无数据' // 数据为空时的提示文本
+        },
         dataKey: null, //ajax返回数据的字段
+        defaultSpread: true, // 是否默认展开
         valueKey: 'id', //选择结果赋值字段 原控件赋值 默认 id
         textKey: 'title' //选择结果显示字段 替换控件赋值 默认 title
     }
@@ -69,7 +78,7 @@ layui.define(['tree', 'jquery'], function (exports) {
     treeSelectClass.prototype.render = function (options) {
         const events = function (reElem, disabled) {
             if (disabled) return;
-            var titleObj = reElem.find('.' + TITLE),
+            const titleObj = reElem.find('.' + TITLE),
                 inputObj = titleObj.find('input'),
                 searchObj = reElem.find(".layui-treeselect-serach"),
                 treeObj = reElem.find('.layui-tree')
@@ -108,7 +117,7 @@ layui.define(['tree', 'jquery'], function (exports) {
                     return false;
                 });
             //搜索框
-            var treeSearchKey = "";
+            let treeSearchKey = "";
             searchObj.on('click', function () {
                 return false;
             });
@@ -137,8 +146,8 @@ layui.define(['tree', 'jquery'], function (exports) {
                             options.selectcall(one);
                         return false;
                     }
-                    if (one.children) {
-                        text = findData(one.children, val);
+                    if (one[options.customName.children]) {
+                        text = findData(one[options.customName.children], val);
                         if (text)
                             return false;
                     }
@@ -211,6 +220,7 @@ layui.define(['tree', 'jquery'], function (exports) {
                     disabled = othis[0].disabled,
                     treeData = options.data,
                     customName = options.customName,
+                    text = options.text,
                     treeId = 'treeselect-tree-' + options.elem.replace("#", "").replace(".", "");
                 //获取tree数据(ajax)
                 if (!treeData && options.url) {
@@ -222,6 +232,9 @@ layui.define(['tree', 'jquery'], function (exports) {
                             options.data = options.dataKey ? d[options.dataKey] : d;
                             if (!options.data)
                                 options.data = [];
+                            options.data.forEach(node => {
+                                node.spread = options.defaultSpread;
+                            })
                             init.call(this);
                         }
                     });
@@ -239,7 +252,7 @@ layui.define(['tree', 'jquery'], function (exports) {
                 othis.hide();
                 othis.addClass("layui-input-treeselect");
                 //替代元素
-                var eleArray = [
+                const eleArray = [
                     '<div class="' + CLASS + (disabled ? ' layui-select-disabled' : '') + '" >',
                     '<div class="' + TITLE + '"><input type="text" placeholder="' + placeholder + '" readonly class="layui-input' + (disabled ? (' ' + DISABLED) : '') + '">',
                     '<i class="layui-edge"></i></div>',
@@ -278,6 +291,7 @@ layui.define(['tree', 'jquery'], function (exports) {
                     customName: customName,
                     onlyIconControl: true,
                     showLine: false,
+                    text: text
                 });
                 //添加tree项目事件
                 $("#" + treeId + " .layui-tree-main:not(':first')")
@@ -306,8 +320,9 @@ layui.define(['tree', 'jquery'], function (exports) {
 
     //核心入口  
     treeSelect.render = function (options) {
-        var inst = new treeSelectClass(options);
+        const inst = new treeSelectClass(options);
         return thisTreeSelect.call(inst);
     };
+
     exports(_MOD, treeSelect);
 });    

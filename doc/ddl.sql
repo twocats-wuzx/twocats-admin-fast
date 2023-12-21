@@ -9,6 +9,7 @@ create table t_menu
     target      varchar(30)  default 'SELF'                                        not null comment '链接打开方式 SELF.当前页面 BLANK.新页面',
     type        varchar(10)  default 'MENU'                                        not null comment '类型: MENU.菜单 PERMISSION.权限',
     authority   varchar(50)  default ''                                            not null comment '授权标识',
+    status      int          default 1                                             not null comment '启用状态 0.禁用 1.启用',
     sort        int          default 0                                             not null comment '菜单顺序',
     create_by   varchar(120) default ''                                            not null comment '创建人',
     update_by   varchar(120) default ''                                            not null comment '最后更新人',

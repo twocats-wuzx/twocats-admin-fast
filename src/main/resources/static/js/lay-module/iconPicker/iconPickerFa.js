@@ -21,7 +21,43 @@ layui.define(['laypage', 'form'], function (exports) {
      * 渲染组件
      */
     IconPicker.prototype.render = function (options) {
-        var opts = options,
+        const common = {
+            /**
+             * 加载样式表
+             */
+            loadCss: function () {
+                const css = '.layui-iconpicker {max-width: 280px;}.layui-iconpicker .layui-anim{display:none;position:absolute;left:0;top:42px;padding:5px 0;z-index:899;min-width:100%;border:1px solid #d2d2d2;max-height:300px;overflow-y:auto;background-color:#fff;border-radius:2px;box-shadow:0 2px 4px rgba(0,0,0,.12);box-sizing:border-box;}.layui-iconpicker-item{border:1px solid #e6e6e6;width:90px;height:60px;border-radius:1px;cursor:pointer;position:relative;}.layui-iconpicker-icon{border-right:1px solid #e6e6e6;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:block;width:60px;height:100%;float:left;text-align:center;background:#fff;transition:all .3s;}.layui-iconpicker-icon i{line-height:60px;font-size:38px;}.layui-iconpicker-item > .layui-edge{left:70px;}.layui-iconpicker-item:hover{border-color:#D2D2D2!important;}.layui-iconpicker-item:hover .layui-iconpicker-icon{border-color:#D2D2D2!important;}.layui-iconpicker.layui-form-selected .layui-anim{display:block;}.layui-iconpicker-body{padding:6px;}.layui-iconpicker .layui-iconpicker-list{background-color:#fff;border:1px solid #ccc;border-radius:4px;}.layui-iconpicker .layui-iconpicker-icon-item{display:inline-block;width:21.1%;line-height:36px;text-align:center;cursor:pointer;vertical-align:top;height:36px;margin:4px;border:1px solid #ddd;border-radius:2px;transition:300ms;}.layui-iconpicker .layui-iconpicker-icon-item i.layui-icon{font-size:17px;}.layui-iconpicker .layui-iconpicker-icon-item:hover{background-color:#eee;border-color:#ccc;font-size: 26px;-webkit-box-shadow:0 0 2px #aaa,0 0 2px #fff inset;-moz-box-shadow:0 0 2px #aaa,0 0 2px #fff inset;box-shadow:0 0 2px #aaa,0 0 2px #fff inset;text-shadow:0 0 1px #fff;}.layui-iconpicker-search{position:relative;margin:0 0 6px 0;border:1px solid #e6e6e6;border-radius:2px;transition:300ms;}.layui-iconpicker-search:hover{border-color:#D2D2D2!important;}.layui-iconpicker-search .layui-input{cursor:text;display:inline-block;width:86%;border:none;padding-right:0;margin-top:1px;}.layui-iconpicker-search .layui-icon{position:absolute;top:11px;right:4%;}.layui-iconpicker-tips{text-align:center;padding:8px 0;cursor:not-allowed;}.layui-iconpicker-page{margin-top:6px;margin-bottom:-6px;font-size:12px;padding:0 2px;}.layui-iconpicker-page-count{display:inline-block;}.layui-iconpicker-page-operate{display:inline-block;float:right;cursor:default;}.layui-iconpicker-page-operate .layui-icon{font-size:12px;cursor:pointer;}.layui-iconpicker-body-page .layui-iconpicker-icon-limit{display:none;}.layui-iconpicker-body-page .layui-iconpicker-icon-limit:first-child{display:block;}';
+                const $style = $('head').find('style[iconpicker]');
+                if ($style.length === 0) {
+                    $('head').append('<style rel="stylesheet" iconpicker>' + css + '</style>');
+                }
+            },
+
+            /**
+             * 获取数据
+             */
+            getData: function (url) {
+                var iconlist = [];
+                $.ajax({
+                    url: url,
+                    type: 'get',
+                    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                    async: false,
+                    success: function (ret) {
+                        var exp = /fa-var-(.*):/ig;
+                        var result;
+                        while ((result = exp.exec(ret)) != null) {
+                            iconlist.push('fa-' + result[1]);
+                        }
+                    },
+                    error: function (xhr, textstatus, thrown) {
+                        layer.msg('fa图标接口有误');
+                    }
+                });
+                return iconlist;
+            }
+        };
+        let opts = options,
             // DOM选择器
             elem = opts.elem,
             // 数据类型：fontClass/unicode
@@ -53,7 +89,7 @@ layui.define(['laypage', 'form'], function (exports) {
             selected = 'layui-form-selected',
             unselect = 'layui-unselect';
 
-        var a = {
+        const a = {
             init: function () {
                 data = common.getData(url);
 
@@ -164,21 +200,22 @@ layui.define(['laypage', 'form'], function (exports) {
              * @returns {string}
              */
             createList: function (text) {
-                var d = data,
+                let i;
+                let d = data,
                     l = d.length,
                     pageHtml = '',
-                    listHtml = $('<div class="layui-iconpicker-list">')//'<div class="layui-iconpicker-list">';
+                    listHtml = $('<div class="layui-iconpicker-list">');//'<div class="layui-iconpicker-list">';
 
                 // 计算分页数据
-                var _limit = limit, // 每页显示数量
+                let _limit = limit, // 每页显示数量
                     _pages = l % _limit === 0 ? l / _limit : parseInt(l / _limit + 1), // 总计多少页
                     _id = PAGE_ID;
 
                 // 图标列表
-                var icons = [];
+                const icons = [];
 
-                for (var i = 0; i < l; i++) {
-                    var obj = d[i];
+                for (i = 0; i < l; i++) {
+                    const obj = d[i];
 
                     // 判断是否模糊查询
                     if (text && obj.indexOf(text) === -1) {
@@ -186,13 +223,13 @@ layui.define(['laypage', 'form'], function (exports) {
                     }
 
                     // 是否自定义格子宽度
-                    var style = '';
+                    let style = '';
                     if (cellWidth !== null) {
                         style += ' style="width:' + cellWidth + '"';
                     }
 
                     // 每个图标dom
-                    var icon = '<div class="layui-iconpicker-icon-item" title="' + obj + '" ' + style + '>';
+                    let icon = '<div class="layui-iconpicker-icon-item" title="' + obj + '" ' + style + '>';
 
                     icon += '<i class="fa ' + obj + '"></i>';
 
@@ -204,11 +241,11 @@ layui.define(['laypage', 'form'], function (exports) {
                 // 查询出图标后再分页
                 l = icons.length;
                 _pages = l % _limit === 0 ? l / _limit : parseInt(l / _limit + 1);
-                for (var i = 0; i < _pages; i++) {
+                for (i = 0; i < _pages; i++) {
                     // 按limit分块
-                    var lm = $('<div class="layui-iconpicker-icon-limit" id="layui-iconpicker-icon-limit-' + tmp + (i + 1) + '">');
+                    const lm = $('<div class="layui-iconpicker-icon-limit" id="layui-iconpicker-icon-limit-' + tmp + (i + 1) + '">');
 
-                    for (var j = i * _limit; j < (i + 1) * _limit && j < l; j++) {
+                    for (let j = i * _limit; j < (i + 1) * _limit && j < l; j++) {
                         lm.append(icons[j]);
                     }
 
@@ -235,14 +272,12 @@ layui.define(['laypage', 'form'], function (exports) {
                         '</div>' +
                         '</div>';
                 }
-
-
                 $('#' + ICON_BODY).find('.layui-anim').find('.' + LIST_BOX).html('').append(listHtml).append(pageHtml);
                 return a;
             },
             // 阻止Layui的一些默认事件
             preventEvent: function () {
-                var item = '#' + ICON_BODY + ' .layui-anim';
+                const item = '#' + ICON_BODY + ' .layui-anim';
                 a.event('click', item, function (e) {
                     e.stopPropagation();
                 });
@@ -250,11 +285,11 @@ layui.define(['laypage', 'form'], function (exports) {
             },
             // 分页
             page: function () {
-                var icon = '#' + PAGE_ID + ' .layui-iconpicker-page-operate .layui-icon';
+                const icon = '#' + PAGE_ID + ' .layui-iconpicker-page-operate .layui-icon';
 
                 $(icon).unbind('click');
                 a.event('click', icon, function (e) {
-                    var elem = e.currentTarget,
+                    let elem = e.currentTarget,
                         total = parseInt($('#' + PAGE_ID + '-pages').html()),
                         isPrev = $(elem).attr('prev') !== undefined,
                         // 按钮上标的页码
@@ -284,9 +319,9 @@ layui.define(['laypage', 'form'], function (exports) {
              * 搜索
              */
             search: function () {
-                var item = '#' + PICKER_BODY + ' .layui-iconpicker-search .layui-input';
+                let item = '#' + PICKER_BODY + ' .layui-iconpicker-search .layui-input';
                 a.event('input propertychange', item, function (e) {
-                    var elem = e.target,
+                    const elem = e.target,
                         t = $(elem).val();
                     a.createList(t);
                 });
@@ -296,14 +331,14 @@ layui.define(['laypage', 'form'], function (exports) {
              * 点击选中图标
              */
             check: function () {
-                var item = '#' + PICKER_BODY + ' .layui-iconpicker-icon-item';
+                const item = '#' + PICKER_BODY + ' .layui-iconpicker-icon-item';
                 a.event('click', item, function (e) {
-                    var el = $(e.currentTarget).find('.fa'),
+                    let el = $(e.currentTarget).find('.fa'),
                         icon = '';
 
-                    var clsArr = el.attr('class').split(/[\s\n]/),
-                        cls = clsArr[1],
-                        icon = cls;
+                    const clsArr = el.attr('class').split(/[\s\n]/),
+                        cls = clsArr[1];
+                    icon = cls;
                     $('#' + TITLE_ID).find('.layui-iconpicker-item .fa').html('').attr('class', clsArr.join(' '));
 
 
@@ -321,9 +356,9 @@ layui.define(['laypage', 'form'], function (exports) {
             },
             // 监听原始input数值改变
             inputListen: function () {
-                var el = $(elem);
+                const el = $(elem);
                 a.event('change', elem, function () {
-                    var value = el.val();
+                    const value = el.val();
                 })
                 // el.change(function(){
 
@@ -335,42 +370,6 @@ layui.define(['laypage', 'form'], function (exports) {
             }
         };
 
-        var common = {
-            /**
-             * 加载样式表
-             */
-            loadCss: function () {
-                var css = '.layui-iconpicker {max-width: 280px;}.layui-iconpicker .layui-anim{display:none;position:absolute;left:0;top:42px;padding:5px 0;z-index:899;min-width:100%;border:1px solid #d2d2d2;max-height:300px;overflow-y:auto;background-color:#fff;border-radius:2px;box-shadow:0 2px 4px rgba(0,0,0,.12);box-sizing:border-box;}.layui-iconpicker-item{border:1px solid #e6e6e6;width:90px;height:38px;border-radius:4px;cursor:pointer;position:relative;}.layui-iconpicker-icon{border-right:1px solid #e6e6e6;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:block;width:60px;height:100%;float:left;text-align:center;background:#fff;transition:all .3s;}.layui-iconpicker-icon i{line-height:38px;font-size:18px;}.layui-iconpicker-item > .layui-edge{left:70px;}.layui-iconpicker-item:hover{border-color:#D2D2D2!important;}.layui-iconpicker-item:hover .layui-iconpicker-icon{border-color:#D2D2D2!important;}.layui-iconpicker.layui-form-selected .layui-anim{display:block;}.layui-iconpicker-body{padding:6px;}.layui-iconpicker .layui-iconpicker-list{background-color:#fff;border:1px solid #ccc;border-radius:4px;}.layui-iconpicker .layui-iconpicker-icon-item{display:inline-block;width:21.1%;line-height:36px;text-align:center;cursor:pointer;vertical-align:top;height:36px;margin:4px;border:1px solid #ddd;border-radius:2px;transition:300ms;}.layui-iconpicker .layui-iconpicker-icon-item i.layui-icon{font-size:17px;}.layui-iconpicker .layui-iconpicker-icon-item:hover{background-color:#eee;border-color:#ccc;-webkit-box-shadow:0 0 2px #aaa,0 0 2px #fff inset;-moz-box-shadow:0 0 2px #aaa,0 0 2px #fff inset;box-shadow:0 0 2px #aaa,0 0 2px #fff inset;text-shadow:0 0 1px #fff;}.layui-iconpicker-search{position:relative;margin:0 0 6px 0;border:1px solid #e6e6e6;border-radius:2px;transition:300ms;}.layui-iconpicker-search:hover{border-color:#D2D2D2!important;}.layui-iconpicker-search .layui-input{cursor:text;display:inline-block;width:86%;border:none;padding-right:0;margin-top:1px;}.layui-iconpicker-search .layui-icon{position:absolute;top:11px;right:4%;}.layui-iconpicker-tips{text-align:center;padding:8px 0;cursor:not-allowed;}.layui-iconpicker-page{margin-top:6px;margin-bottom:-6px;font-size:12px;padding:0 2px;}.layui-iconpicker-page-count{display:inline-block;}.layui-iconpicker-page-operate{display:inline-block;float:right;cursor:default;}.layui-iconpicker-page-operate .layui-icon{font-size:12px;cursor:pointer;}.layui-iconpicker-body-page .layui-iconpicker-icon-limit{display:none;}.layui-iconpicker-body-page .layui-iconpicker-icon-limit:first-child{display:block;}';
-                var $style = $('head').find('style[iconpicker]');
-                if ($style.length === 0) {
-                    $('head').append('<style rel="stylesheet" iconpicker>' + css + '</style>');
-                }
-            },
-
-            /**
-             * 获取数据
-             */
-            getData: function (url) {
-                var iconlist = [];
-                $.ajax({
-                    url: url,
-                    type: 'get',
-                    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-                    async: false,
-                    success: function (ret) {
-                        var exp = /fa-var-(.*):/ig;
-                        var result;
-                        while ((result = exp.exec(ret)) != null) {
-                            iconlist.push('fa-' + result[1]);
-                        }
-                    },
-                    error: function (xhr, textstatus, thrown) {
-                        layer.msg('fa图标接口有误');
-                    }
-                });
-                return iconlist;
-            }
-        };
 
         a.init();
         return new IconPicker();
@@ -382,7 +381,7 @@ layui.define(['laypage', 'form'], function (exports) {
      * @param iconName 图标名称，自动识别fontClass/unicode
      */
     IconPicker.prototype.checkIcon = function (filter, iconName) {
-        var el = $('*[lay-filter=' + filter + ']'),
+        const el = $('*[lay-filter=' + filter + ']'),
             p = el.next().find('.layui-iconpicker-item .fa'),
             c = iconName;
 
@@ -394,6 +393,6 @@ layui.define(['laypage', 'form'], function (exports) {
         el.attr('value', c).val(c);
     };
 
-    var iconPicker = new IconPicker();
+    const iconPicker = new IconPicker();
     exports(_MOD, iconPicker);
 });

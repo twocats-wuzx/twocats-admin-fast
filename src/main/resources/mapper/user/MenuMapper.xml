@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="tech.twocats.admin.module.user.mapper.MenuMapper">
+<mapper namespace="tech.twocats.admin.module.admin.mapper.MenuMapper">
 
-    <resultMap id="BaseResultMap" type="tech.twocats.admin.module.user.domain.entity.Menu">
+    <resultMap id="BaseResultMap" type="tech.twocats.admin.module.admin.domain.entity.Menu">
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="pid" column="pid" jdbcType="INTEGER"/>
             <result property="title" column="title" jdbcType="VARCHAR"/>
@@ -13,6 +13,7 @@
             <result property="target" column="target" jdbcType="VARCHAR"/>
             <result property="type" column="type" jdbcType="VARCHAR"/>
             <result property="authority" column="authority" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="INTEGER"/>
             <result property="sort" column="sort" jdbcType="INTEGER"/>
             <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
             <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
@@ -22,7 +23,7 @@
 
     <sql id="Base_Column_List">
         id,pid,title,
-        icon,href,target,
+        icon,href,target,status,
         type,authority,sort,
         create_by,update_by,create_time,
         update_time

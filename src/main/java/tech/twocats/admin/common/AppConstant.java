@@ -4,4 +4,6 @@ public interface AppConstant {
 
     String SUPER_ADMIN_CODE = "super_admin";
 
+    String EMPTY_STRING = "";
+
 }

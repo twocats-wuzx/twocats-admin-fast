@@ -1,13 +1,13 @@
 layui.define(['table', 'jquery', 'form'], function (exports) {
     "use strict";
 
-    var MOD_NAME = 'tableSelect',
+    const MOD_NAME = 'tableSelect',
         $ = layui.jquery,
         table = layui.table,
         form = layui.form;
-    var tableSelect = function () {
+    let tableSelect = function () {
         this.v = '1.1.0';
-    };
+    }
 
     /**
      * 初始化表格选择器
@@ -259,13 +259,13 @@ layui.define(['table', 'jquery', 'form'], function (exports) {
     }
 
     //自动完成渲染
-    var tableSelect = new tableSelect();
+    tableSelect = new tableSelect();
 
     //FIX 滚动时错位
-    if(window.top == window.self){
+    if(window.top === window.self){
         $(window).scroll(function () {
             tableSelect.hide();
-        });
+        })
     }
 
     exports(MOD_NAME, tableSelect);

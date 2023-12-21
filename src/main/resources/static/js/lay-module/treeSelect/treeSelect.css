@@ -21,6 +21,11 @@
     box-sizing: border-box;
 }
 
+.layui-form-select .layui-tree-iconClick {
+    width: 12px;
+    margin: 0 8px 0 12px;
+}
+
 .layui-form-select .layui-treeselect-serach {
     display: none;
 }
@@ -52,7 +57,8 @@
 
 .layui-form-selected .layui-tree .layui-this {
     /* background-color: #bacbff; */
-    background-color: #38a02e;
+    background-color: #2ca789;
+    border-radius: 3px;
     color: #fff;
     width: 100%;
 }

@@ -2,6 +2,7 @@ package tech.twocats.admin.exception;
 
 
 import lombok.Getter;
+import tech.twocats.admin.common.error.Error;
 import tech.twocats.admin.common.error.ErrorType;
 import tech.twocats.admin.common.error.SystemError;
 
@@ -30,7 +31,7 @@ public class BaseException extends RuntimeException{
 
     public BaseException(ErrorType errorType, String message) {
         super(message);
-        this.errorType = errorType;
+        this.errorType = new Error(errorType.getCode(), message);
     }
 
     public BaseException(ErrorType errorType, String message, Throwable cause) {
