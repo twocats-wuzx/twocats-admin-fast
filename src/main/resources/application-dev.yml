@@ -53,7 +53,10 @@ spring:
         wall:
           config:
             multi-statement-allow: true
-
   devtools:
     restart:
       enabled: true
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

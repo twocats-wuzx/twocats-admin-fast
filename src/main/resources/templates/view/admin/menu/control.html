@@ -22,7 +22,6 @@
 <!-- 表格工具栏功能 -->
 <script type="text/html" id="table-tool-bar" th:fragment="table_tool_bar">
     <button class="layui-btn table-bth layui-btn-normal" lay-event="add" >新增</button>
-    <button class="layui-btn table-bth layui-btn-warm" lay-event="export" >导出</button>
     <button class="layui-btn table-bth layui-btn-danger" lay-event="delete" >删除</button>
 </script>
 
@@ -46,9 +45,10 @@
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label" for="form-title">标题</label>
+            <label class="layui-form-label" for="form-title"><span class="required-tag">*</span>标题</label>
             <div class="layui-input-block">
-                <input type="text" name="title" id="form-title" lay-verify="required" placeholder="请输入菜单标题" autocomplete="off" class="layui-input">
+                <input type="text" name="title" id="form-title" lay-verify="required" lay-msg="标题不能为空" placeholder="请输入菜单标题" autocomplete="off" class="layui-input">
+                <span class="error-msg"></span>
             </div>
         </div>
 
@@ -59,16 +59,17 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label" for="form-icon">菜单图标</label>
+            <label class="layui-form-label" for="form-icon"><span class="required-tag">*</span>菜单图标</label>
             <div class="layui-input-block">
-                <input type="text" name="icon" id="form-icon" placeholder="请选菜单图标" autocomplete="off" class="layui-input">
+                <input type="text" name="icon" id="form-icon" lay-verify="required" lay-msg="菜单图标不能为空" placeholder="请选菜单图标" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div id="icon-picker"></div>
         <div class="layui-form-item">
-            <label class="layui-form-label" for="form-authority">权限标识</label>
+            <label class="layui-form-label" for="form-authority"><span class="required-tag">*</span>权限标识</label>
             <div class="layui-input-block">
-                <input type="text" name="authority" id="form-authority" placeholder="请输入权限标识" autocomplete="off" class="layui-input">
+                <input type="text" name="authority" id="form-authority" lay-verify="required" lay-msg="权限标识不能为空" placeholder="请输入权限标识" autocomplete="off" class="layui-input">
+                <span class="error-msg"></span>
             </div>
         </div>
         <div class="layui-form-item">
@@ -87,19 +88,21 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label" for="form-type">菜单类型</label>
+            <label class="layui-form-label" for="form-type"><span class="required-tag">*</span>菜单类型</label>
             <div class="layui-input-block">
-                <select name="type" id="form-type" lay-filter="form-type">
+                <select name="type" id="form-type" lay-verify="required" lay-msg="菜单类型不能为空" lay-filter="form-type">
                     <option value="MENU" selected>菜单</option>
                     <option value="PERMISSION">权限</option>
                 </select>
+                <span class="error-msg"></span>
             </div>
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label" for="form-sort">菜单顺序</label>
+            <label class="layui-form-label" for="form-sort"><span class="required-tag">*</span>菜单顺序</label>
             <div class="layui-input-block">
-                <input type="number" name="sort" id="form-sort" autocomplete="off" class="layui-input" min="0" step="1" lay-affix="number">
+                <input type="number" name="sort" id="form-sort" lay-verify="required|number" lay-msg="菜单顺序不能为空" autocomplete="off" class="layui-input" min="0" step="1" lay-affix="number">
+                <span class="error-msg"></span>
             </div>
         </div>
 

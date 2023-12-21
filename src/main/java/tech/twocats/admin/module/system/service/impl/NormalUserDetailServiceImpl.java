@@ -1,4 +1,4 @@
-package tech.twocats.admin.module.admin.service.impl;
+package tech.twocats.admin.module.system.service.impl;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

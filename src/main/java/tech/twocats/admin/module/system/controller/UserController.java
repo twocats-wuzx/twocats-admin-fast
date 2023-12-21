@@ -1,4 +1,4 @@
-package tech.twocats.admin.module.admin.controller;
+package tech.twocats.admin.module.system.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;

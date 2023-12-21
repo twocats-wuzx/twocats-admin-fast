@@ -10,14 +10,14 @@
     <link rel="stylesheet" th:href="@{/css/custom.css}" media="all">
     <style>
         .icon-style { font-size: 20px; margin-right: 3px; }
-        .table-bth:not(.layui-btn-lg ):not(.layui-btn-sm):not(.layui-btn-xs)  {height: 30px;line-height: 30px;padding: 0 16px;}
+        .table-bth:not(.layui-btn-lg ):not(.layui-btn-sm):not(.layui-btn-xs)  {height: 30px; line-height: 30px;padding: 0 16px;}
         .add-or-update-form{margin: 40px 30px; }
         .layui-form-label{
             border-right: 12px;
-            width: 60px;
+            width: 70px;
         }
         .layui-input-block{
-            margin-left: 98px;
+            margin-left: 108px;
         }
     </style>
 </head>
@@ -187,6 +187,7 @@
         // 工具栏操作
         treeTable.on('toolbar(menu-table)', function (obj) {
             if (obj.event === 'add') {
+                clearVerify()
                 addBtn.removeClass('layui-hide')
                 updateBtn.addClass('layui-hide')
                 form.val('add_or_update', {
@@ -208,9 +209,6 @@
                     resize: false,
                     content: $('#add_or_update'),
                 })
-            }
-            if (obj.event === 'export') {
-                layer.msg('导出数据', {icon: 0});
             }
             if (obj.event === 'delete') {
                 let checkStatus = treeTable.checkStatus('menu-table')
@@ -236,6 +234,7 @@
                 deleteRow(data.id)
             }
             if (layEvent === 'edit') {
+                clearVerify()
                 updateBtn.removeClass('layui-hide')
                 addBtn.addClass('layui-hide')
                 $.ajax({
@@ -287,7 +286,6 @@
 
         form.on('switch(form-status)', function(obj){
             const id = this.value;
-            const dataId = $(this).parent().parent().parent().attr('data-index')
             $.ajax({
                 url: '/api/menu/change/status',
                 type: 'POST',
@@ -319,7 +317,22 @@
                     }, 350)
                 }
             })
-        });
+        })
+
+        form.verify({
+            required: function(value, item){
+                let othis = $(item);
+                console.log(othis.prevAll().last())
+                if(!value){
+                    othis.addClass('error-form-item')
+                    othis.nextAll(".error-msg").html(othis.attr('lay-msg') || '必填项不能为空')
+                    return true
+                }
+                othis.removeClass('error-form-item')
+                othis.nextAll(".error-msg").empty()
+                return false
+            }
+        })
 
         form.on('select(form-type)', function (data) {
             const selectedValue = data.value;
@@ -376,6 +389,16 @@
         })
 
         addBtn.click(() => {
+            let validate = true;
+            addBtn.closest('.layui-form').find('*[lay-verify]').each(function(){
+                if (!form.validate(this)){
+                    validate = false
+                }
+            })
+            if (!validate){
+                return
+            }
+
             let data = form.val('add_or_update')
             $.ajax({
                 url: '/api/menu/save',
@@ -423,7 +446,6 @@
         function deleteRow(id) {
             deleteBatch([id])
         }
-
         function deleteBatch(ids) {
             layer.confirm('确定删除此菜单吗？', {
                 btn: ['确定', '关闭']
@@ -457,6 +479,13 @@
                     }
                 })
             }, function(){
+            })
+        }
+
+        function clearVerify() {
+            addBtn.closest('.layui-form').find('*[lay-verify]').each(function(){
+                $(this).removeClass('error-form-item layui-form-danger')
+                $(this).nextAll(".error-msg").empty()
             })
         }
 

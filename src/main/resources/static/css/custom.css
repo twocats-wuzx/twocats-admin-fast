@@ -13,6 +13,11 @@
     font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
     vertical-align: middle;
 }
+/* 表单组件 */
+.layui-form-danger+.layui-form-select .layui-input, .layui-form-danger:focus {
+    border-color: #ededed;
+    box-shadow: 0 0 0 3px rgba(253, 253, 253, 0.08);
+}
 
 /* 表格组件 */
 .layui-table {
@@ -81,5 +86,24 @@
 
 .layui-body {
     left: 260px;
+}
+
+/* 颜色 */
+.required-tag {
+    color: #ec0a0a;
+    margin: 0 3px;
+}
+
+.error-msg {
+    color: #ec0a0a;
+    font-size: 0.75rem;
+}
+
+.error-form-item {
+    border: 1px solid #ec0a0a;
+}
+
+.normal-form-item {
+    border: 1px solid #ededed;
 }
 

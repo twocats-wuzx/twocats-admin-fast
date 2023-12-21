@@ -33,5 +33,5 @@ app:
     href: welcome
   logo-info:
     title: 两只猫管理后台
-    image: images/logo.jpg
+    image: images/logo.png
     href: index
