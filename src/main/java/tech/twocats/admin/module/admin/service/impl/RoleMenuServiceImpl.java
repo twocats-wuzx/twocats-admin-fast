@@ -38,7 +38,7 @@ public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu>
         if (roleIds.isEmpty()){
             return new ArrayList<>(1);
         }
-        boolean isSuperAdmin = roleIds.contains(AppConstant.SUPER_ADMIN_ID);
+        boolean isSuperAdmin = roleIds.contains(AppConstant.SUPER_ADMIN_ROLE_ID);
         return Optional
                 .ofNullable(this.baseMapper.getMenusByRoleIds(
                         roleIds, isSuperAdmin,

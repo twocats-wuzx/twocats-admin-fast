@@ -4,7 +4,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import tech.twocats.admin.module.admin.domain.dto.UserDetailDTO;
+import tech.twocats.admin.module.system.domain.dto.UserDetailDTO;
 import tech.twocats.admin.module.admin.domain.entity.Menu;
 import tech.twocats.admin.module.admin.domain.entity.User;
 import tech.twocats.admin.module.admin.service.IUserService;

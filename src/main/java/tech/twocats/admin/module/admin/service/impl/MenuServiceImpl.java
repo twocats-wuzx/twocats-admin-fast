@@ -11,7 +11,7 @@ import tech.twocats.admin.common.enums.MenuTypeEnum;
 import tech.twocats.admin.common.error.SystemError;
 import tech.twocats.admin.common.model.vo.LongListWrapper;
 import tech.twocats.admin.exception.BaseException;
-import tech.twocats.admin.module.admin.domain.dto.UserDetailDTO;
+import tech.twocats.admin.module.system.domain.dto.UserDetailDTO;
 import tech.twocats.admin.module.admin.domain.entity.Menu;
 import tech.twocats.admin.module.admin.domain.entity.UserRole;
 import tech.twocats.admin.module.admin.domain.vo.MenuQuery;
@@ -21,7 +21,6 @@ import tech.twocats.admin.module.admin.mapper.MenuMapper;
 import org.springframework.stereotype.Service;
 import tech.twocats.admin.module.admin.service.IMenuService;
 import tech.twocats.admin.module.admin.service.IRoleMenuService;
-import tech.twocats.admin.module.admin.service.IRoleService;
 import tech.twocats.admin.module.admin.service.IUserRoleService;
 
 import javax.validation.constraints.NotNull;
@@ -130,7 +129,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
             UserDetailDTO userDetailDTO = (UserDetailDTO) principal;
             updateWrapper.set(Menu::getUpdateBy, userDetailDTO.getUsername());
         }
-        this.update(updateWrapper);
+        updateWrapper.update();
     }
 
     @Override

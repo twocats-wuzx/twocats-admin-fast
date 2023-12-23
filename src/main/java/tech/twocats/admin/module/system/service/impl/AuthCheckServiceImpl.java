@@ -5,6 +5,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.stereotype.Service;
+import tech.twocats.admin.common.AppConstant;
 import tech.twocats.admin.module.system.service.IAuthCheckService;
 
 import java.util.Collection;
@@ -28,7 +29,7 @@ public class AuthCheckServiceImpl implements IAuthCheckService {
                 .getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).collect(Collectors.toList());
 
-        if (authorities.contains("ADMIN")){
+        if (authorities.contains(AppConstant.SUPER_ADMIN_AUTH_CODE)){
             return true;
         }
         for (String permission : permissions) {

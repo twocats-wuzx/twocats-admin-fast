@@ -91,7 +91,7 @@ public class RoleController {
 
     @ResponseBody
     @PostMapping("/api/role/transfer")
-    @PreAuthorize("@authCheck.check('user:add, user:edit')")
+    @PreAuthorize("@authCheck.check('user:add', 'user:edit')")
     public Result<List<RoleVO>> getRoleDetail(){
         return Result.ok(roleService.getRoleTransfer());
     }

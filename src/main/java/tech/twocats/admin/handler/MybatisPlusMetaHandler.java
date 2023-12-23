@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import tech.twocats.admin.module.admin.domain.dto.UserDetailDTO;
+import tech.twocats.admin.module.system.domain.dto.UserDetailDTO;
+
+import java.util.Date;
 
 @Component
 public class MybatisPlusMetaHandler implements MetaObjectHandler {
@@ -17,6 +19,8 @@ public class MybatisPlusMetaHandler implements MetaObjectHandler {
             this.setFieldValByName("createBy", userDetailDTO.getUsername(), metaObject);
             this.setFieldValByName("updateBy", userDetailDTO.getUsername(), metaObject);
         }
+        this.setFieldValByName("createTime", new Date(), metaObject);
+        this.setFieldValByName("updateTime", new Date(), metaObject);
     }
 
     @Override
@@ -26,6 +30,7 @@ public class MybatisPlusMetaHandler implements MetaObjectHandler {
             UserDetailDTO userDetailDTO = (UserDetailDTO) principal;
             this.setFieldValByName("updateBy", userDetailDTO.getUsername(), metaObject);
         }
+        this.setFieldValByName("updateTime", new Date(), metaObject);
     }
 
 }

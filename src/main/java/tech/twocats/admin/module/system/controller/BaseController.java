@@ -1,7 +1,6 @@
 package tech.twocats.admin.module.system.controller;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
@@ -11,7 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tech.twocats.admin.module.system.domain.vo.InitVO;
-import tech.twocats.admin.module.admin.domain.dto.UserDetailDTO;
+import tech.twocats.admin.module.system.domain.dto.UserDetailDTO;
 import tech.twocats.admin.module.admin.domain.vo.MenuVO;
 import tech.twocats.admin.module.admin.service.IMenuService;
 
@@ -43,7 +42,6 @@ public class BaseController {
      * 首页
      */
     @RequestMapping(value = {"/", "/index"})
-    @PreAuthorize("@authCheck.check('dashbroad')")
     public String index(@AuthenticationPrincipal UserDetailDTO userDetail, Model model) {
         model.addAttribute("name", StringUtils.hasLength(userDetail.getRealName())
                 ? userDetail.getRealName()
@@ -55,7 +53,6 @@ public class BaseController {
      * 首屏
      */
     @RequestMapping(value = {"/welcome"})
-    @PreAuthorize("@authCheck.check('dashbroad')")
     public String welcomeView() {
         return "view/dashboard/welcome";
     }

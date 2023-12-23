@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWra
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -14,7 +15,7 @@ import tech.twocats.admin.common.enums.MenuTypeEnum;
 import tech.twocats.admin.common.error.SystemError;
 import tech.twocats.admin.common.model.vo.LongListWrapper;
 import tech.twocats.admin.exception.BaseException;
-import tech.twocats.admin.module.admin.domain.dto.UserDetailDTO;
+import tech.twocats.admin.module.system.domain.dto.UserDetailDTO;
 import tech.twocats.admin.module.admin.domain.entity.Menu;
 import tech.twocats.admin.module.admin.domain.entity.RoleMenu;
 import tech.twocats.admin.module.admin.domain.entity.User;
@@ -28,7 +29,6 @@ import tech.twocats.admin.module.admin.service.IRoleMenuService;
 import tech.twocats.admin.module.admin.service.IUserRoleService;
 import tech.twocats.admin.module.admin.service.IUserService;
 
-import java.security.Security;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,13 +40,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     implements IUserService {
 
     private final IMenuService menuService;
+    private final PasswordEncoder passwordEncoder;
     private final IUserRoleService userRoleService;
     private final IRoleMenuService roleMenuService;
 
     public UserServiceImpl(IMenuService menuService,
+                           PasswordEncoder passwordEncoder,
                            IUserRoleService userRoleService,
                            IRoleMenuService roleMenuService) {
         this.menuService = menuService;
+        this.passwordEncoder = passwordEncoder;
         this.userRoleService = userRoleService;
         this.roleMenuService = roleMenuService;
     }
@@ -98,9 +101,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 .ifPresent(user -> {
                     throw new BaseException(SystemError.INVALID_PARAMETER, "用户名已存在");
                 });
+        String encodePassword = passwordEncoder.encode(request.getPassword());
+
         User user = new User();
         user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
+        user.setPassword(encodePassword);
         user.setNickname(request.getNickname());
         user.setRealName(request.getRealName());
         user.setGender(request.getGender());
@@ -152,7 +157,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             UserDetailDTO userDetailDTO = (UserDetailDTO) principal;
             updateWrapper.set(User::getUpdateBy, userDetailDTO.getUsername());
         }
-        this.update(updateWrapper);
+        updateWrapper.update();
         userRoleService.saveUserRoles(request.getId(), request.getRoleIds());
     }
 
@@ -212,7 +217,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 .stream()
                 .map(UserRole::getRoleId)
                 .collect(Collectors.toList());
-        roleIds.remove(AppConstant.SUPER_ADMIN_ID);
+        roleIds.remove(AppConstant.SUPER_ADMIN_ROLE_ID);
         return UserVO.fromUser(user, roleIds);
     }
 

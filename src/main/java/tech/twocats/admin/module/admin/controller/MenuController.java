@@ -9,11 +9,10 @@ import tech.twocats.admin.common.ValidateGroup;
 import tech.twocats.admin.common.model.vo.Result;
 import tech.twocats.admin.common.model.vo.LongListWrapper;
 import tech.twocats.admin.common.model.vo.LongWrapper;
-import tech.twocats.admin.module.admin.domain.dto.UserDetailDTO;
+import tech.twocats.admin.module.system.domain.dto.UserDetailDTO;
 import tech.twocats.admin.module.admin.domain.vo.MenuQuery;
 import tech.twocats.admin.module.admin.domain.vo.MenuRequest;
 import tech.twocats.admin.module.admin.domain.vo.MenuVO;
-import tech.twocats.admin.module.admin.domain.vo.RoleVO;
 import tech.twocats.admin.module.admin.service.IMenuService;
 
 import javax.validation.constraints.NotNull;
@@ -82,7 +81,7 @@ public class MenuController {
 
     @ResponseBody
     @PostMapping("/api/permission/list")
-    @PreAuthorize("@authCheck.check('role:add, role:edit')")
+    @PreAuthorize("@authCheck.check('role:add', 'role:edit')")
     public Result<List<MenuVO>> getAllMenus(@AuthenticationPrincipal UserDetailDTO userDetailDTO){
         return Result.ok(menuService.getPermissionsByUserId(userDetailDTO.getId()));
     }

@@ -1,13 +1,15 @@
-package tech.twocats.admin.module.admin.domain.dto;
+package tech.twocats.admin.module.system.domain.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import tech.twocats.admin.common.AppConstant;
 import tech.twocats.admin.common.enums.GenderEnum;
 import tech.twocats.admin.module.admin.domain.entity.User;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -82,6 +84,7 @@ public class UserDetailDTO implements UserDetails {
         userDetail.setMobile(user.getMobile());
         userDetail.setStatus(user.getStatus());
 
+
         Optional.ofNullable(permissions)
                         .ifPresent(list -> {
                             userDetail.setAuthorities(list
@@ -90,6 +93,12 @@ public class UserDetailDTO implements UserDetails {
                                     .collect(Collectors.toList())
                             );
                         });
+        if (userDetail.getAuthorities() == null){
+            userDetail.setAuthorities(new ArrayList<>(1));
+        }
+        if (user.getId().equals(AppConstant.DEFAULT_SUPER_ADMIN_ID)){
+            userDetail.authorities.add(new SimpleGrantedAuthority(AppConstant.SUPER_ADMIN_AUTH_CODE));
+        }
         return userDetail;
     }
 

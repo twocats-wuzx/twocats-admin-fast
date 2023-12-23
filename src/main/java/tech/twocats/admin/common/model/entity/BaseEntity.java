@@ -32,13 +32,13 @@ public class BaseEntity {
     /**
      * 创建时间
      */
-    @TableField(value = "create_time", fill = FieldFill.INSERT, update = "now()")
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
     private Date createTime;
 
     /**
      * 最后更新时间
      */
-    @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE, update = "now()")
+    @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
 }

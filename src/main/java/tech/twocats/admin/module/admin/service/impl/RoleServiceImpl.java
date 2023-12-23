@@ -14,11 +14,10 @@ import tech.twocats.admin.common.enums.StatusEnum;
 import tech.twocats.admin.common.error.SystemError;
 import tech.twocats.admin.common.model.vo.LongListWrapper;
 import tech.twocats.admin.exception.BaseException;
-import tech.twocats.admin.module.admin.domain.dto.UserDetailDTO;
+import tech.twocats.admin.module.system.domain.dto.UserDetailDTO;
 import tech.twocats.admin.module.admin.domain.entity.Menu;
 import tech.twocats.admin.module.admin.domain.entity.Role;
 import tech.twocats.admin.module.admin.domain.entity.RoleMenu;
-import tech.twocats.admin.module.admin.domain.entity.User;
 import tech.twocats.admin.module.admin.domain.vo.RoleQuery;
 import tech.twocats.admin.module.admin.domain.vo.RoleRequest;
 import tech.twocats.admin.module.admin.domain.vo.RoleVO;
@@ -48,7 +47,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
     @Override
     public Long getSuperAdminId() {
         Role superAdmin = ChainWrappers.lambdaQueryChain(this.baseMapper)
-                .eq(Role::getRoleCode, AppConstant.SUPER_ADMIN_CODE)
+                .eq(Role::getRoleCode, AppConstant.SUPER_ADMIN_ROLE_CODE)
                 .one();
         if (superAdmin != null){
             return superAdmin.getId();
@@ -64,7 +63,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
     @Override
     public IPage<Role> getRoles(RoleQuery query) {
         return this.lambdaQuery()
-                .ne(Role::getRoleCode, AppConstant.SUPER_ADMIN_CODE)
+                .ne(Role::getRoleCode, AppConstant.SUPER_ADMIN_ROLE_CODE)
                 .like(StringUtils.hasLength(query.getRoleName()), Role::getRoleName, query.getRoleName())
                 .like(StringUtils.hasLength(query.getRoleCode()), Role::getRoleCode, query.getRoleCode())
                 .page(query.getPage());
@@ -80,7 +79,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         Role role = this.lambdaQuery()
                 .eq(Role::getId, key)
                 .one();
-        if (role == null || role.getRoleCode().equals(AppConstant.SUPER_ADMIN_CODE)){
+        if (role == null || role.getRoleCode().equals(AppConstant.SUPER_ADMIN_ROLE_CODE)){
             throw new BaseException(SystemError.INVALID_PARAMETER, "角色不存在");
         }
 
@@ -108,6 +107,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
                     throw new BaseException(SystemError.INVALID_PARAMETER, "角色名称或角色编码已存在");
                 });
 
+        if (Objects.equals(request.getRoleCode(), AppConstant.SUPER_ADMIN_AUTH_CODE)){
+            throw new BaseException(SystemError.INVALID_PARAMETER, "不允许添加超级管理员角色");
+        }
         Role role = new Role();
         role.setRoleName(request.getRoleName());
         role.setRoleCode(request.getRoleCode());
@@ -125,7 +127,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteRole(LongListWrapper ids) {
-        ids.getKeys().remove(AppConstant.SUPER_ADMIN_ID);
+        ids.getKeys().remove(AppConstant.SUPER_ADMIN_ROLE_ID);
         roleMenuService.lambdaUpdate()
                 .in(RoleMenu::getRoleId, ids.getKeys())
                 .remove();
@@ -138,14 +140,18 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
      */
     @Override
     public void editRole(RoleRequest request) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (Objects.equals(request.getRoleCode(), AppConstant.SUPER_ADMIN_AUTH_CODE)){
+            throw new BaseException(SystemError.INVALID_PARAMETER, "不允许修改超级管理员角色");
+        }
 
         Role role = this.lambdaQuery()
                 .eq(Role::getId, request.getId())
-                .ne(Role::getRoleCode, AppConstant.SUPER_ADMIN_CODE)
+                .ne(Role::getRoleCode, AppConstant.SUPER_ADMIN_ROLE_CODE)
                 .oneOpt()
                 .orElseThrow(() -> new BaseException(SystemError.INVALID_PARAMETER, "角色不存在"));
 
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         LambdaUpdateChainWrapper<Role> updateWrapper = this.lambdaUpdate()
                 .eq(Role::getId, request.getId())
                 .set(Role::getRoleName, request.getRoleName())
@@ -157,7 +163,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
             UserDetailDTO userDetailDTO = (UserDetailDTO) principal;
             updateWrapper.set(Role::getUpdateBy, userDetailDTO.getUsername());
         }
-        this.update(updateWrapper);
+        updateWrapper.update();
         // 保存角色菜单
         roleMenuService.saveRoleMenus(role.getId(), request.getMenuIds());
     }
@@ -171,7 +177,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         LambdaUpdateChainWrapper<Role> updateWrapper = this.lambdaUpdate()
                 .eq(Role::getId, request.getId())
-                .ne(Role::getRoleCode, AppConstant.SUPER_ADMIN_CODE)
+                .ne(Role::getRoleCode, AppConstant.SUPER_ADMIN_ROLE_CODE)
                 .set(Role::getStatus, request.getStatus())
                 .set(Role::getUpdateTime, new Date());
         if (principal instanceof UserDetailDTO){
@@ -192,7 +198,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         if (CollectionUtils.isEmpty(roleIds)){
             return new ArrayList<>(1);
         }
-        roleIds.remove(AppConstant.SUPER_ADMIN_ID);
+        roleIds.remove(AppConstant.SUPER_ADMIN_ROLE_ID);
         return this.lambdaQuery()
                 .select(Role::getId)
                 .in(Role::getId, roleIds)
@@ -207,7 +213,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
     public List<RoleVO> getRoleTransfer() {
         return this.lambdaQuery()
                 .eq(Role::getStatus, StatusEnum.ENABLED.getKey())
-                .ne(Role::getRoleCode, AppConstant.SUPER_ADMIN_CODE)
+                .ne(Role::getRoleCode, AppConstant.SUPER_ADMIN_ROLE_CODE)
                 .list()
                 .stream()
                 .map(role -> {
