@@ -1,4 +1,4 @@
-package tech.twocats.admin.common.model;
+package tech.twocats.admin.common.model.vo;
 
 
 import lombok.Getter;

@@ -28,4 +28,13 @@
         create_by,update_by,create_time,
         update_time
     </sql>
+
+    <sql id="Menu_Column_List">
+        m.id, m.pid, m.title,
+        m.icon, m.href, m.target, m.status,
+        m.type, m.authority, m.sort,
+        m.create_by, m.update_by, m.create_time,
+        m.update_time
+    </sql>
+
 </mapper>

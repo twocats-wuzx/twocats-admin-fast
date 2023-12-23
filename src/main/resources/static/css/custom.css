@@ -24,6 +24,17 @@
     margin: 5px 0;
 }
 
+/* 表格行选择点击颜色 */
+.layui-table-checked {
+    background-color: #dbe5fb;
+}
+.layui-table-checked.layui-table-click {
+    background-color: #cfd9f1;
+}
+.layui-table-checked.layui-table-hover {
+    background-color: #cfd9f1;
+}
+
 /* 表单组件 */
 .layui-input, .layui-select, .layui-textarea {
     height: 33px;

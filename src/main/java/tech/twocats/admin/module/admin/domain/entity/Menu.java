@@ -46,7 +46,7 @@ public class Menu extends BaseEntity implements Serializable {
     private LinkTypeEnum target;
 
     /**
-     * 启用状态
+     * 启用状态 0.禁用 1.启用
      */
     @TableField(value = "status")
     private Boolean status;

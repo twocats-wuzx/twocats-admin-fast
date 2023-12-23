@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import tech.twocats.admin.common.model.Result;
-import tech.twocats.admin.module.admin.domain.vo.LoginRequest;
+import tech.twocats.admin.common.model.vo.Result;
+import tech.twocats.admin.module.system.domain.vo.LoginRequest;
 import tech.twocats.admin.module.admin.service.IUserService;
 import tech.twocats.admin.util.AuthExceptionUtil;
 

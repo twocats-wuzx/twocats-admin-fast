@@ -26,6 +26,7 @@ create table t_role
     role_name   varchar(20)  default ''                                            not null comment '角色名称',
     role_code   varchar(30)  default ''                                            not null comment '角色编码',
     remark      varchar(50)  default ''                                            not null comment '备注',
+    status      int          default 1 comment '启用状态 0.禁用 1.启用'                                           not null comment '启用状态 0.禁用 1.启用',
     create_by   varchar(120) default ''                                            not null comment '创建人',
     update_by   varchar(120) default ''                                            not null comment '最后更新人',
     create_time datetime     default CURRENT_TIMESTAMP                             not null comment '创建时间',

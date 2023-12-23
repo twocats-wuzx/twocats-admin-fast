@@ -9,7 +9,6 @@ import tech.twocats.admin.common.error.SystemError;
 import tech.twocats.admin.common.model.vo.LongListWrapper;
 import tech.twocats.admin.exception.BaseException;
 import tech.twocats.admin.module.admin.domain.entity.Menu;
-import tech.twocats.admin.module.admin.domain.entity.RoleMenu;
 import tech.twocats.admin.module.admin.domain.entity.UserRole;
 import tech.twocats.admin.module.admin.domain.vo.MenuQuery;
 import tech.twocats.admin.module.admin.domain.vo.MenuRequest;
@@ -30,41 +29,23 @@ import java.util.stream.Collectors;
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
     implements IMenuService {
 
-    private final IRoleService roleService;
     private final IUserRoleService userRoleService;
     private final IRoleMenuService roleMenuService;
 
-    public MenuServiceImpl(IRoleService roleService, IUserRoleService userRoleService, IRoleMenuService roleMenuService) {
-        this.roleService = roleService;
+    public MenuServiceImpl(IUserRoleService userRoleService,
+                           IRoleMenuService roleMenuService) {
         this.userRoleService = userRoleService;
         this.roleMenuService = roleMenuService;
     }
 
     @Override
+    public List<MenuVO> getPermissionsByUserId(Long userId) {
+        return getUserMenus(userId, null);
+    }
+
+    @Override
     public List<MenuVO> getMenusByUserId(Long userId) {
-        List<UserRole> userRoles = userRoleService.lambdaQuery()
-                .eq(UserRole::getUserId, userId).list();
-        if (CollectionUtils.isEmpty(userRoles)){
-            return new ArrayList<>(1);
-        }
-        List<Long> roleIds = userRoles.stream().map(UserRole::getRoleId).collect(Collectors.toList());
-        Long superAdminId = roleService.getSuperAdminId();
-        boolean isSuperAdmin = roleIds.contains(superAdminId);
-
-        List<RoleMenu> roleMenus = roleMenuService.lambdaQuery()
-                .in(RoleMenu::getRoleId, roleIds).list();
-        if (CollectionUtils.isEmpty(roleMenus)){
-            return new ArrayList<>(1);
-        }
-
-        List<Long> menuIds = roleMenus.stream().map(RoleMenu::getMenuId).distinct().collect(Collectors.toList());
-        List<Menu> menus = this.lambdaQuery()
-                .in(!isSuperAdmin, Menu::getId, menuIds)
-                .eq(Menu::getType, MenuTypeEnum.MENU)
-                .orderByAsc(Menu::getPid)
-                .orderByAsc(Menu::getSort)
-                .list();
-        return toMenuTree(menus);
+        return getUserMenus(userId, MenuTypeEnum.MENU);
     }
 
     @Override
@@ -97,6 +78,13 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteMenu(@NotNull LongListWrapper ids) {
+        // 通过ids删除菜单
+        this.removeByIds(ids.getKeys());
+    }
+
+    @Override
     public void editMenu(MenuRequest request) {
         MenuRequest.checkMenu(request);
         // 判断菜单是否存在
@@ -107,13 +95,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
 
         Menu menu = MenuRequest.toMenu(request);
         this.updateById(menu);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteMenu(@NotNull LongListWrapper ids) {
-        // 通过ids删除菜单
-        this.removeByIds(ids.getKeys());
     }
 
     @Override
@@ -131,6 +112,47 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
         this.updateById(menu);
     }
 
+    @Override
+    public List<Long> validateMenuIds(List<Long> menuIds) {
+        if (CollectionUtils.isEmpty(menuIds)){
+            return new ArrayList<>(1);
+        }
+        List<Menu> menus = this.lambdaQuery()
+                .select(Menu::getId)
+                .eq(Menu::getStatus, true)
+                .in(Menu::getId, menuIds)
+                .list();
+        if (CollectionUtils.isEmpty(menus)){
+            return new ArrayList<>(1);
+        }
+        return menus.stream()
+                .map(Menu::getId)
+                .filter(menuIds::contains)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 查询用户有权限的菜单
+     * @param userId 用户ID
+     * @param menuType 菜单类型, 不传则代表不区分类型
+     * @return 菜单列表
+     */
+    private List<MenuVO> getUserMenus(Long userId, MenuTypeEnum menuType) {
+        List<UserRole> userRoles = userRoleService.lambdaQuery()
+                .eq(UserRole::getUserId, userId).list();
+        if (CollectionUtils.isEmpty(userRoles)){
+            return new ArrayList<>(1);
+        }
+        List<Long> roleIds = userRoles.stream().map(UserRole::getRoleId).collect(Collectors.toList());
+        List<Menu> menus = roleMenuService.getMenusByRoleIds(roleIds, menuType);
+        return toMenuTree(menus);
+    }
+
+    /**
+     * 将菜单列表转换为菜单树
+     * @param menus 菜单列表
+     * @return 菜单树
+     */
     public List<MenuVO> toMenuTree(List<Menu> menus){
         List<Long> ids = menus.stream().map(Menu::getId).collect(Collectors.toList());
         Map<Long, MenuVO> menuVOMap = menus.stream()

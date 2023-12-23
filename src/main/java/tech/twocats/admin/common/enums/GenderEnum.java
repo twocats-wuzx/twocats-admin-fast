@@ -16,6 +16,11 @@ public enum GenderEnum implements IEnum<String> {
      * 女
      */
     FEMALE("女"),
+
+    /**
+     * 保密
+     */
+    SECRECY("保密"),
     ;
 
     private final String desc;

@@ -19,4 +19,29 @@
         create_by,update_by,create_time,
         update_time
     </sql>
+
+
+    <select id="getMenusByRoleIds" resultType="tech.twocats.admin.module.admin.domain.entity.Menu">
+        select
+            <include refid="tech.twocats.admin.module.admin.mapper.MenuMapper.Menu_Column_List"/>
+        from t_menu m
+            <if test="!isSuperAdmin">
+                , t_role_menu rm, t_role r
+            </if>
+        where m.status = 1
+            <if test="menuType != null">
+                and m.type = #{menuType}
+            </if>
+            <if test="!isSuperAdmin">
+                and r.status = 1
+                and r.id = rm.role_id
+                and m.id = rm.menu_id
+                and rm.role_id in
+                <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+                    #{roleId}
+                </foreach>
+            </if>
+        order by m.pid, m.sort
+    </select>
+
 </mapper>

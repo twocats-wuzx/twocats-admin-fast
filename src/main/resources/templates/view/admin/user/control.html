@@ -1,0 +1,81 @@
+<!-- 搜索功能 -->
+<div th:fragment="search_html">
+    <form class="layui-form layui-row layui-col-space16">
+        <div class="layui-col-md3">
+            <div class="layui-input-wrap">
+                <input type="text" name="roleNameSearch" value="" placeholder="角色名称" class="layui-input" lay-affix="clear">
+            </div>
+        </div>
+        <div class="layui-col-md3">
+            <div class="layui-input-wrap">
+                <input type="text" name="roleCodeSearch" value="" placeholder="角色编码" class="layui-input" lay-affix="clear">
+            </div>
+        </div>
+        <div class="layui-btn-container layui-col-md6">
+            <button class="layui-btn" lay-submit lay-filter="table-search">搜索</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </form>
+</div>
+
+<!-- 单行表格数据操作功能 -->
+<script type="text/html" id="table-line-operate" th:fragment="table_line_operate">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<!-- 表格工具栏功能 -->
+<script type="text/html" id="table-tool-bar" th:fragment="table_tool_bar">
+    <button class="layui-btn table-bth layui-btn-normal" lay-event="add" >新增</button>
+    <button class="layui-btn table-bth layui-btn-danger" lay-event="delete" >删除</button>
+</script>
+
+<!-- 表格启用禁用状态 -->
+<script type="text/html" id="status_switch"  th:fragment="status_switch" th:inline="none">
+    <input type="checkbox" name="status" value="{{= d.id }}" title="启用|禁用" lay-skin="switch" lay-filter="form-status" {{= d.status ? "checked" : "" }}>
+</script>
+
+<!-- 新增或编辑数据功能 -->
+<div th:fragment="add_or_update_html" id="add_or_update" style="display: none">
+    <form class="layui-form add-or-update-form" action="" lay-filter="add_or_update">
+        <div class="layui-form-item layui-hide">
+            <div class="layui-input-block">
+                <input type="text" name="id" id="form-id" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" for="form-roleName"><span class="required-tag">*</span>角色名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="roleName" id="form-roleName" lay-verify="required" lay-msg="角色名称不能为空" placeholder="请输入角色名称" autocomplete="off" class="layui-input">
+                <span class="error-msg"></span>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" for="form-roleCode"><span class="required-tag">*</span>角色编码</label>
+            <div class="layui-input-block">
+                <input type="text" name="roleCode" id="form-roleCode" lay-verify="required" lay-msg="角色编码不能为空" placeholder="请输入角色编码" autocomplete="off" class="layui-input">
+                <span class="error-msg"></span>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" for="form-remark">备注</label>
+            <div class="layui-input-block">
+                <input type="text" name="remark" id="form-remark" placeholder="请输入备注" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色权限</label>
+            <div id="permission-tree" class="layui-input-block"></div>
+        </div>
+
+        <div style="text-align: right; margin-top: 20px">
+            <button type="button" id="cancel-btn" class="layui-btn table-bth layui-btn-primary">取消</button>
+            <button type="button" id="add-btn" class="layui-btn table-bth layui-btn-normal" >添加</button>
+            <button type="button" id="update-btn" class="layui-btn table-bth layui-btn-normal layui-hide">修改</button>
+        </div>
+    </form>
+</div>

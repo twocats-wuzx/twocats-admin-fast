@@ -6,4 +6,6 @@ public interface AppConstant {
 
     String EMPTY_STRING = "";
 
+    long SUPER_ADMIN_ID = 1L;
+
 }

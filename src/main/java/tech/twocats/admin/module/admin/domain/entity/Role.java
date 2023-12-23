@@ -30,6 +30,12 @@ public class Role extends BaseEntity implements Serializable {
     @TableField(value = "remark")
     private String remark;
 
+    /**
+     * 启用状态 0.禁用 1.启用
+     */
+    @TableField(value = "status")
+    private Boolean status;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

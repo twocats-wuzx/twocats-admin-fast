@@ -7,13 +7,13 @@ import java.util.Objects;
 
 @Getter
 public enum StatusEnum implements IEnum<String>{
-    SUCCESS(0, "成功"),
-    FIELD(1, "失败"),
+    ENABLED(1, "启用"),
+    DISABLED(0, "禁用"),
     ;
 
-    StatusEnum(Integer key, String value) {
+    StatusEnum(Integer key, String desc) {
         this.key = key;
-        this.desc = value;
+        this.desc = desc;
     }
 
     private final Integer key;

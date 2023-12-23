@@ -60,7 +60,7 @@
         const targetSelected = $('#form-target')
         const hrefSelected = $('#form-href')
 
-        let title = $("input[name='title']").val().trim()
+        let title = $("input[name='titleSearch']").val().trim()
         let addOrUpdatePageIndex = null;
 
         // 渲染图标选择器
@@ -172,7 +172,9 @@
             }
         });
 
-        // 搜索栏操作
+        /**
+         * 监听表格数据筛选事件
+         */
         form.on('submit(table-search)', function(data){
             title = $("input[name='title']").val().trim();
             // 执行搜索重载
@@ -184,7 +186,9 @@
             return false
         })
 
-        // 工具栏操作
+        /**
+         * toolbar监听事件
+         */
         treeTable.on('toolbar(menu-table)', function (obj) {
             if (obj.event === 'add') {
                 clearVerify()
@@ -225,13 +229,15 @@
             }
         })
 
-        // 单行数据操作
+        /**
+         * 监听行工具栏事件
+         */
         treeTable.on('tool(menu-table)', function (obj) {
             let data = obj.data;
             let layEvent = obj.event;
 
             if (layEvent === 'del') {
-                deleteRow(data.id)
+                deleteBatch([data.id])
             }
             if (layEvent === 'edit') {
                 clearVerify()
@@ -322,7 +328,6 @@
         form.verify({
             required: function(value, item){
                 let othis = $(item);
-                console.log(othis.prevAll().last())
                 if(!value){
                     othis.addClass('error-form-item')
                     othis.nextAll(".error-msg").html(othis.attr('lay-msg') || '必填项不能为空')
@@ -443,9 +448,10 @@
             layer.close(addOrUpdatePageIndex);
         })
 
-        function deleteRow(id) {
-            deleteBatch([id])
-        }
+        /**
+         * 批量删除菜单
+         * @param ids 菜单的ID列表
+         */
         function deleteBatch(ids) {
             layer.confirm('确定删除此菜单吗？', {
                 btn: ['确定', '关闭']
@@ -482,6 +488,9 @@
             })
         }
 
+        /**
+         * 清除表单验证
+         */
         function clearVerify() {
             addBtn.closest('.layui-form').find('*[lay-verify]').each(function(){
                 $(this).removeClass('error-form-item layui-form-danger')

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>角色管理</title>
+    <link rel="stylesheet" th:href="@{/lib/layui-v2.8.18/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <link rel="stylesheet" th:href="@{/js/lay-module/treeSelect/treeSelect.css}" media="all">
+    <link rel="stylesheet" th:href="@{/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/css/custom.css}" media="all">
+    <style>
+        .table-bth:not(.layui-btn-lg ):not(.layui-btn-sm):not(.layui-btn-xs)  {height: 30px; line-height: 30px;padding: 0 16px;}
+        .add-or-update-form{margin: 40px 30px; }
+        .layui-form-label{
+            border-right: 12px;
+            width: 70px;
+        }
+        .layui-input-block { margin-left: 108px; }
+
+        .layui-icon-file::before { content: ""; }
+        .layui-tree-iconClick { width: 15px; }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div>
+            <th:block th:replace="view/admin/role/control::search_html"/>
+            <table id="role-table" class="layui-table" lay-filter="role-table"></table>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="view/admin/user/control::add_or_update_html"/>
+<th:block th:replace="view/admin/user/control::table_tool_bar"/>
+<th:block th:replace="view/admin/user/control::table_line_operate"/>
+<th:block th:replace="view/admin/user/control::status_switch"/>
+
+<script th:src="@{/lib/layui-v2.8.18/layui.js}" charset="utf-8"></script>
+<script th:src="@{/js/twocats-constant.js}" charset="utf-8"></script>
+<script th:src="@{/js/lay-config.js}" charset="utf-8"></script>
+<script th:inline="javascript">
+    layui.use(['jquery', 'layer', 'form', 'table', 'eleTree'],
+        function () {
+            const $ = layui.jquery
+            const layer = layui.layer
+            const form = layui.form
+            const table = layui.table;
+            const eleTree = layui.eleTree;
+
+            const addBtn = $('#add-btn')
+            const updateBtn = $('#update-btn')
+            const cancelBtn = $('#cancel-btn')
+
+            let roleName = $("input[name='roleNameSearch']").val().trim()
+            let roleCode = $("input[name='roleCodeSearch']").val().trim()
+            let addOrUpdatePageIndex = null;
+
+            let permissionTree = eleTree.render({
+                id: 'permission-tree',
+                url: '/api/permission/list',
+                method: 'post',
+                contentType: 'application/json',
+                headers: {
+                    'Accept': 'application/json'
+                },
+                elem: '#permission-tree',
+                showCheckbox: true,
+                renderAfterExpand: false,
+                showLine: true,
+                accordion: true,
+                indent: 30,
+                request: {
+                    key: 'id',
+                    name: 'title',
+                    children: 'child'
+                },
+                response: {
+                    statusName: "code",
+                    statusCode: 0,
+                    dataName: "data"
+                }
+            })
+
+            table.render({
+                elem: '#role-table',
+                url: '/api/role/list',
+                method: 'post',
+                where: {
+                    roleName: roleName,
+                    roleCode: roleCode
+                },
+                contentType: 'application/json',
+                headers: {
+                    'Accept': 'application/json'
+                },
+                request: {
+                    pageName: 'current',
+                    limitName: 'size'
+                },
+                parseData: function (res) {
+                    return {
+                        "code": res.code,
+                        "msg": res.msg,
+                        "count": res.data.total,
+                        "data": res.data.records
+                    };
+                },
+                toolbar: '#table-tool-bar',
+                defaultToolbar: [],
+                height: 'full-35',
+                css: [
+                    '.layui-table-tool-temp{padding-right: 145px;}'
+                ].join(''),
+                cellMinWidth: 80,
+                page: true,
+                cols: [ [
+                    {type: 'checkbox'},
+                    {field: 'id', width: 80, title: 'ID', align: 'center'},
+                    {field: 'roleName', width: 200, title: '角色名称', align: 'center'},
+                    {field: 'roleCode', width: 200, title: '角色编码', align: 'center'},
+                    {field: 'remark', title: '备注', align: 'center'},
+                    {field: 'status', width: 100, align: 'center', templet: '#status_switch', title: '状态'},
+                    {field: 'createTime', width: 180, align: 'center', title: '创建时间'},
+                    {templet: '#table-line-operate', width: 120, align: 'center', title: '操作'}
+                ] ],
+            })
+
+            /**
+             * 监听表格数据筛选事件
+             */
+            form.on('submit(table-search)', function (data) {
+                reloadTable()
+                return false
+            })
+
+            /**
+             * 监听表头工具栏事件
+             */
+            table.on('toolbar(role-table)', function (obj) {
+                if (obj.event === 'add') {
+                    clearVerify()
+                    addBtn.removeClass('layui-hide')
+                    updateBtn.addClass('layui-hide')
+                    form.val('add_or_update', {
+                        "roleName": '',
+                        "roleCode": '',
+                        "remark": '',
+                    });
+                    permissionTree.unCheckNodes() // 清空选择的节点
+                    addOrUpdatePageIndex = layer.open({
+                        title: ['添加角色', 'font-size: 20px;'],
+                        type: 1,
+                        shade: 0.2,
+                        area: ['430px', '600px'],
+                        resize: false,
+                        content: $('#add_or_update'),
+                    })
+                }
+                if (obj.event === 'delete') {
+                    let checkStatus = table.checkStatus('role-table')
+                    let data = checkStatus.data
+                    if (data.length === 0) {
+                        layer.msg('请选择要删除的数据', {icon: 0});
+                        return
+                    }
+                    let ids = []
+                    data.forEach(item => {
+                        ids.push(item.id)
+                    })
+                    deleteBatch(ids)
+                }
+            })
+
+            /**
+             * 监听行工具栏事件
+             */
+            table.on('tool(role-table)', function (obj) {
+                let data = obj.data;
+                let layEvent = obj.event;
+
+                if (layEvent === 'del') {
+                    deleteBatch([data.id])
+                }
+                if (layEvent === 'edit') {
+                    clearVerify()
+                    updateBtn.removeClass('layui-hide')
+                    addBtn.addClass('layui-hide')
+                    $.ajax({
+                        url: '/api/role/detail',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        headers: {
+                            'Accept': 'application/json'
+                        },
+                        data: JSON.stringify({
+                            key: data.id,
+                        }),
+                        success: function (response) {
+                            if (response.code === web_status.SUCCESS) {
+                                form.val('add_or_update', {
+                                    "id": response.data.id,
+                                    "roleName": response.data.roleName,
+                                    "roleCode": response.data.roleCode,
+                                    "remark": response.data.remark
+                                });
+                                permissionTree.setChecked(response.data.menus, true)
+
+                                addOrUpdatePageIndex = layer.open({
+                                    title: ['修改角色', 'font-size: 20px;'],
+                                    type: 1,
+                                    shade: 0.2,
+                                    area: ['430px', '600px'],
+                                    resize: false,
+                                    content: $('#add_or_update'),
+                                })
+                            } else {
+                                layer.msg(response.msg, {icon: 5});
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            layer.msg(xhr.responseJson.error, {icon: 5});
+                        }
+                    })
+                }
+            })
+
+            /**
+             * 调整角色状态
+             */
+            form.on('switch(form-status)', function (obj) {
+                const id = this.value;
+                $.ajax({
+                    url: '/api/role/change/status',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    data: JSON.stringify({
+                        id: id,
+                        status: obj.elem.checked
+                    }),
+                    success: function (response) {
+                        if (response.code === web_status.SUCCESS) {
+                            layer.msg(response.msg, {icon: 1});
+                        } else {
+                            layer.msg(response.msg, {icon: 5});
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        layer.msg("网络异常", {icon: 5});
+                        reloadTable()
+                    }
+                })
+            })
+
+            /**
+             * 自定义表单校验规则
+             */
+            form.verify({
+                required: function (value, item) {
+                    let othis = $(item);
+                    if (!value) {
+                        othis.addClass('error-form-item')
+                        othis.nextAll(".error-msg").html(othis.attr('lay-msg') || '必填项不能为空')
+                        return true
+                    }
+                    othis.removeClass('error-form-item')
+                    othis.nextAll(".error-msg").empty()
+                    return false
+                }
+            })
+
+            addBtn.on('click', () => {
+                let validate = true;
+                addBtn.closest('.layui-form').find('*[lay-verify]').each(function () {
+                    if (!form.validate(this)) {
+                        validate = false
+                    }
+                })
+                if (!validate) {
+                    return
+                }
+
+                let data = form.val('add_or_update')
+                $.ajax({
+                    url: '/api/role/save',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    data: JSON.stringify({
+                        roleName: data.roleName,
+                        roleCode: data.roleCode,
+                        remark: data.remark,
+                        menus: getCheckedIds,
+                    }),
+                    success: function (response) {
+                        if (response.code === web_status.SUCCESS) {
+                            layer.msg(response.msg, {icon: 1})
+                            layer.close(addOrUpdatePageIndex);
+                            reloadTable()
+                        } else {
+                            layer.msg(response.msg, {icon: 5})
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        layer.msg(xhr.responseJson, {icon: 5})
+                    }
+                })
+
+            })
+            updateBtn.on('click', () => {
+                let data = form.val('add_or_update')
+                $.ajax({
+                    url: '/api/role/edit',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    data: JSON.stringify({
+                        id: data.id,
+                        roleName: data.roleName,
+                        roleCode: data.roleCode,
+                        remark: data.remark,
+                        menus: getCheckedIds(),
+                    }),
+                    success: function (response) {
+                        if (response.code === web_status.SUCCESS) {
+                            layer.msg(response.msg, {icon: 1})
+                            layer.close(addOrUpdatePageIndex);
+                            reloadTable()
+                        } else {
+                            layer.msg(response.msg, {icon: 5});
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        layer.msg(xhr.responseJson, {icon: 5});
+                    }
+                })
+            })
+            cancelBtn.on('click', () => {
+                layer.close(addOrUpdatePageIndex);
+            })
+
+            /**
+             * 批量删除角色
+             * @param ids 角色的ID列表
+             */
+            function deleteBatch(ids) {
+                layer.confirm('确定删除此角色吗？', {
+                    btn: ['确定', '关闭']
+                }, function () {
+                    $.ajax({
+                        url: '/api/role/delete',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        headers: {
+                            'Accept': 'application/json'
+                        },
+                        data: JSON.stringify({
+                            keys: ids
+                        }),
+                        success: function (response) {
+                            if (response.code === web_status.SUCCESS) {
+                                layer.msg(response.msg, {icon: 1});
+                                reloadTable()
+                            } else {
+                                layer.msg(response.msg, {icon: 5});
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            layer.msg(xhr.responseJson, {icon: 5});
+                        }
+                    })
+                }, function () {
+                })
+            }
+
+            /**
+             * 重载表格
+             */
+            function reloadTable() {
+                roleName = $("input[name='roleNameSearch']").val().trim()
+                roleCode = $("input[name='roleCodeSearch']").val().trim()
+                // 执行搜索重载
+                table.reloadData('role-table', {
+                    where: {
+                        "roleName": roleName,
+                        "roleCode": roleCode
+                    }
+                });
+            }
+
+            /**
+             * 清除表单验证
+             */
+            function clearVerify() {
+                addBtn.closest('.layui-form').find('*[lay-verify]').each(function () {
+                    $(this).removeClass('error-form-item layui-form-danger')
+                    $(this).nextAll(".error-msg").empty()
+                })
+            }
+
+            function getCheckedIds() {
+                let checkedMenu = permissionTree.getChecked(true, true);
+                let ids = []
+                checkedMenu.forEach(item => {
+                    ids.push(...getIdByMenuItem(item))
+                })
+                return ids
+            }
+
+            /**
+             * 递归的方式获取权限树中的ID
+             * @param item
+             * @returns {*[]}
+             */
+            function getIdByMenuItem(item) {
+                let ids = []
+                ids.push(item.id)
+                if (item.child && item.child.length > 0) {
+                    item.child.forEach(child => {
+                        ids.push(...getIdByMenuItem(child))
+                    })
+                }
+                return ids
+            }
+
+        })
+</script>
+</body>
+</html>

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.util.StringUtils;
 import tech.twocats.admin.common.AppConstant;
+import tech.twocats.admin.common.ValidateGroup;
 import tech.twocats.admin.common.enums.LinkTypeEnum;
 import tech.twocats.admin.common.enums.MenuTypeEnum;
 import tech.twocats.admin.common.error.SystemError;
@@ -22,7 +23,8 @@ public class MenuRequest {
     /**
      * id
      */
-    @NotNull(message = "菜单ID不能为空", groups = {Edit.class, StatusChange.class})
+    @NotNull(message = "菜单ID不能为空",
+            groups = {ValidateGroup.Edit.class, ValidateGroup.StatusChange.class})
     private Long id;
 
     /**
@@ -33,7 +35,7 @@ public class MenuRequest {
     /**
      * 标题
      */
-    @NotNull(message = "标题不能为空", groups = {Add.class, Edit.class})
+    @NotNull(message = "标题不能为空", groups = {ValidateGroup.Add.class, ValidateGroup.Edit.class})
     private String title;
 
     /**
@@ -44,7 +46,7 @@ public class MenuRequest {
     /**
      * 菜单顺序
      */
-    @NotNull(message = "菜单顺序不能为空", groups = {Add.class, Edit.class})
+    @NotNull(message = "菜单顺序不能为空", groups = {ValidateGroup.Add.class, ValidateGroup.Edit.class})
     private Integer sort;
 
     /**
@@ -60,13 +62,13 @@ public class MenuRequest {
     /**
      * 类型: MENU.菜单 PERMISSION.权限
      */
-    @NotNull(message = "菜单类型不能为空", groups = {Add.class, Edit.class})
+    @NotNull(message = "菜单类型不能为空", groups = {ValidateGroup.Add.class, ValidateGroup.Edit.class})
     private MenuTypeEnum type;
 
     /**
      * 状态
      */
-    @NotNull(message = "菜单状态不能为空", groups = {StatusChange.class})
+    @NotNull(message = "菜单状态不能为空", groups = {ValidateGroup.StatusChange.class})
     private Boolean status;
 
     /**
@@ -131,8 +133,5 @@ public class MenuRequest {
         }
     }
 
-    public static class Add{}
-    public static class Edit{}
-    public static class StatusChange{}
 
 }
