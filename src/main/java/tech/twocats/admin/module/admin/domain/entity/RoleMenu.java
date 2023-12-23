@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import tech.twocats.admin.common.model.entity.BaseEntity;
 
 
 @Data

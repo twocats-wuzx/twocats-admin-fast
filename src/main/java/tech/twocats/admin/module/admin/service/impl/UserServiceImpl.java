@@ -1,8 +1,10 @@
 package tech.twocats.admin.module.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -12,6 +14,7 @@ import tech.twocats.admin.common.enums.MenuTypeEnum;
 import tech.twocats.admin.common.error.SystemError;
 import tech.twocats.admin.common.model.vo.LongListWrapper;
 import tech.twocats.admin.exception.BaseException;
+import tech.twocats.admin.module.admin.domain.dto.UserDetailDTO;
 import tech.twocats.admin.module.admin.domain.entity.Menu;
 import tech.twocats.admin.module.admin.domain.entity.RoleMenu;
 import tech.twocats.admin.module.admin.domain.entity.User;
@@ -25,7 +28,9 @@ import tech.twocats.admin.module.admin.service.IRoleMenuService;
 import tech.twocats.admin.module.admin.service.IUserRoleService;
 import tech.twocats.admin.module.admin.service.IUserService;
 
+import java.security.Security;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -127,20 +132,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void editUser(UserRequest request) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         // 通过ID判断用户是否存在，不存在抛出异常
         this.lambdaQuery()
                 .eq(User::getId, request.getId())
                 .oneOpt()
                 .orElseThrow(() -> new BaseException(SystemError.INVALID_PARAMETER, "用户不存在"));
-        this.lambdaUpdate()
+        LambdaUpdateChainWrapper<User> updateWrapper = this.lambdaUpdate()
                 .eq(User::getId, request.getId())
                 .set(User::getNickname, request.getNickname())
                 .set(User::getRealName, request.getRealName())
                 .set(User::getGender, request.getGender())
                 .set(User::getEmail, request.getEmail())
                 .set(User::getMobile, request.getMobile())
-                .update();
+                .set(User::getUpdateTime, new Date());
 
+        if (principal instanceof UserDetailDTO){
+            UserDetailDTO userDetailDTO = (UserDetailDTO) principal;
+            updateWrapper.set(User::getUpdateBy, userDetailDTO.getUsername());
+        }
+        this.update(updateWrapper);
         userRoleService.saveUserRoles(request.getId(), request.getRoleIds());
     }
 
@@ -155,10 +167,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 .eq(User::getId, request.getId())
                 .oneOpt()
                 .orElseThrow(() -> new BaseException(SystemError.INVALID_PARAMETER, "用户不存在"));
-        this.lambdaUpdate()
-                .eq(User::getId, request.getId())
-                .set(User::getStatus, request.getStatus())
-                .update();
+        User user = new User();
+        user.setId(request.getId());
+        user.setStatus(request.getStatus());
+        this.updateById(user);
     }
 
     /**

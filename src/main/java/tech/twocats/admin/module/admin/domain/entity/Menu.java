@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import tech.twocats.admin.common.enums.LinkTypeEnum;
 import tech.twocats.admin.common.enums.MenuTypeEnum;
+import tech.twocats.admin.common.model.entity.BaseEntity;
 
 
 @Data

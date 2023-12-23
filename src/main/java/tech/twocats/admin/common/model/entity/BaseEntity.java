@@ -1,5 +1,6 @@
-package tech.twocats.admin.module.admin.domain.entity;
+package tech.twocats.admin.common.model.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -19,25 +20,25 @@ public class BaseEntity {
     /**
      * 创建人
      */
-    @TableField(value = "create_by")
+    @TableField(value = "create_by", fill = FieldFill.INSERT)
     private String createBy;
 
     /**
      * 最后更新人
      */
-    @TableField(value = "update_by")
+    @TableField(value = "update_by", fill = FieldFill.INSERT_UPDATE)
     private String updateBy;
 
     /**
      * 创建时间
      */
-    @TableField(value = "create_time")
+    @TableField(value = "create_time", fill = FieldFill.INSERT, update = "now()")
     private Date createTime;
 
     /**
      * 最后更新时间
      */
-    @TableField(value = "update_time")
+    @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE, update = "now()")
     private Date updateTime;
 
 }

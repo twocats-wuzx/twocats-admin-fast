@@ -84,7 +84,6 @@ public class MenuRequest {
         menu.setTitle(request.getTitle());
         menu.setSort(request.getSort());
         menu.setType(request.getType());
-        menu.setAuthority(request.getAuthority());
         menu.setStatus(Boolean.TRUE);
 
         // 菜单和权限设置不同的值
@@ -95,6 +94,7 @@ public class MenuRequest {
                 menu.setTarget(request.getTarget());
                 break;
             case PERMISSION:
+                menu.setAuthority(request.getAuthority());
                 menu.setHref(AppConstant.EMPTY_STRING);
                 menu.setIcon(AppConstant.EMPTY_STRING);
                 menu.setTarget(null);

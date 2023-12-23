@@ -1,9 +1,11 @@
 package tech.twocats.admin.module.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import org.springframework.lang.NonNull;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -12,9 +14,11 @@ import tech.twocats.admin.common.enums.StatusEnum;
 import tech.twocats.admin.common.error.SystemError;
 import tech.twocats.admin.common.model.vo.LongListWrapper;
 import tech.twocats.admin.exception.BaseException;
+import tech.twocats.admin.module.admin.domain.dto.UserDetailDTO;
 import tech.twocats.admin.module.admin.domain.entity.Menu;
 import tech.twocats.admin.module.admin.domain.entity.Role;
 import tech.twocats.admin.module.admin.domain.entity.RoleMenu;
+import tech.twocats.admin.module.admin.domain.entity.User;
 import tech.twocats.admin.module.admin.domain.vo.RoleQuery;
 import tech.twocats.admin.module.admin.domain.vo.RoleRequest;
 import tech.twocats.admin.module.admin.domain.vo.RoleVO;
@@ -134,18 +138,26 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
      */
     @Override
     public void editRole(RoleRequest request) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         Role role = this.lambdaQuery()
                 .eq(Role::getId, request.getId())
                 .ne(Role::getRoleCode, AppConstant.SUPER_ADMIN_CODE)
                 .oneOpt()
                 .orElseThrow(() -> new BaseException(SystemError.INVALID_PARAMETER, "角色不存在"));
 
-        this.lambdaUpdate()
-                        .eq(Role::getId, request.getId())
-                        .set(Role::getRoleName, request.getRoleName())
-                        .set(Role::getRoleCode, request.getRoleCode())
-                        .set(Role::getRemark, request.getRemark())
-                        .update();
+        LambdaUpdateChainWrapper<Role> updateWrapper = this.lambdaUpdate()
+                .eq(Role::getId, request.getId())
+                .set(Role::getRoleName, request.getRoleName())
+                .set(Role::getRoleCode, request.getRoleCode())
+                .set(Role::getRemark, request.getRemark())
+                .set(Role::getUpdateTime, new Date());
+
+        if (principal instanceof UserDetailDTO){
+            UserDetailDTO userDetailDTO = (UserDetailDTO) principal;
+            updateWrapper.set(Role::getUpdateBy, userDetailDTO.getUsername());
+        }
+        this.update(updateWrapper);
         // 保存角色菜单
         roleMenuService.saveRoleMenus(role.getId(), request.getMenuIds());
     }
@@ -156,11 +168,17 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
      */
     @Override
     public void changeRoleStatus(RoleRequest request) {
-        this.lambdaUpdate()
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LambdaUpdateChainWrapper<Role> updateWrapper = this.lambdaUpdate()
                 .eq(Role::getId, request.getId())
                 .ne(Role::getRoleCode, AppConstant.SUPER_ADMIN_CODE)
                 .set(Role::getStatus, request.getStatus())
-                .update();
+                .set(Role::getUpdateTime, new Date());
+        if (principal instanceof UserDetailDTO){
+            UserDetailDTO userDetailDTO = (UserDetailDTO) principal;
+            updateWrapper.set(Role::getUpdateBy, userDetailDTO.getUsername());
+        }
+        this.update(updateWrapper);
     }
 
     /**

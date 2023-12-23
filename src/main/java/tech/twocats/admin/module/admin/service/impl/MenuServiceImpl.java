@@ -1,13 +1,17 @@
 package tech.twocats.admin.module.admin.service.impl;
 
+import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import tech.twocats.admin.common.AppConstant;
 import tech.twocats.admin.common.enums.MenuTypeEnum;
 import tech.twocats.admin.common.error.SystemError;
 import tech.twocats.admin.common.model.vo.LongListWrapper;
 import tech.twocats.admin.exception.BaseException;
+import tech.twocats.admin.module.admin.domain.dto.UserDetailDTO;
 import tech.twocats.admin.module.admin.domain.entity.Menu;
 import tech.twocats.admin.module.admin.domain.entity.UserRole;
 import tech.twocats.admin.module.admin.domain.vo.MenuQuery;
@@ -72,7 +76,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
                     .oneOpt()
                     .orElseThrow(() -> new BaseException(SystemError.INVALID_PARAMETER, "父级菜单不存在"));
         }
-
         Menu menu = MenuRequest.toMenu(request);
         this.save(menu);
     }
@@ -93,8 +96,41 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
                 .oneOpt()
                 .orElseThrow(() -> new BaseException(SystemError.INVALID_PARAMETER, "菜单不存在"));
 
-        Menu menu = MenuRequest.toMenu(request);
-        this.updateById(menu);
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LambdaUpdateChainWrapper<Menu> updateWrapper = this.lambdaUpdate();
+        updateWrapper
+                .eq(Menu::getId, request.getId())
+                .set(Menu::getPid, request.getPid() == null ? -1 : request.getPid())
+                .set(Menu::getTitle, request.getTitle())
+                .set(Menu::getSort, request.getSort())
+                .set(Menu::getType, request.getType())
+                .set(Menu::getStatus, Boolean.TRUE)
+                .set(Menu::getUpdateTime, new Date());
+
+        // 菜单和权限设置不同的值
+        switch (request.getType()) {
+            case MENU:
+                updateWrapper
+                        .set(Menu::getHref, request.getHref())
+                        .set(Menu::getIcon, request.getIcon())
+                        .set(Menu::getTarget, request.getTarget());
+                break;
+            case PERMISSION:
+                updateWrapper
+                        .set(Menu::getAuthority, request.getAuthority())
+                        .set(Menu::getHref, AppConstant.EMPTY_STRING)
+                        .set(Menu::getIcon, AppConstant.EMPTY_STRING)
+                        .set(Menu::getTarget, null);
+                break;
+            default:
+                break;
+        }
+
+        if (principal instanceof UserDetailDTO){
+            UserDetailDTO userDetailDTO = (UserDetailDTO) principal;
+            updateWrapper.set(Menu::getUpdateBy, userDetailDTO.getUsername());
+        }
+        this.update(updateWrapper);
     }
 
     @Override
