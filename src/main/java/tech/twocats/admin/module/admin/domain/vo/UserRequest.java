@@ -9,6 +9,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 
 @Getter
 @Setter
@@ -49,6 +50,15 @@ public class UserRequest {
      */
     private String nickname;
 
+    @NotBlank(message = "用户状态不能为空",
+            groups = {ValidateGroup.StatusChange.class})
+    private Boolean status;
+
+
+    @NotBlank(message = "用户头像不能为空",
+            groups = {ValidateGroup.UploadAvatar.class})
+    private String avatar;
+
 
     /**
      * 性别 MALE.男 FEMALE.女
@@ -68,5 +78,7 @@ public class UserRequest {
      */
     @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式错误" )
     private String mobile;
+
+    private List<Long> roleIds;
 
 }

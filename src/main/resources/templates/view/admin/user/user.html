@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>角色管理</title>
+    <title>用户管理</title>
     <link rel="stylesheet" th:href="@{/lib/layui-v2.8.18/css/layui.css}" media="all">
     <link rel="stylesheet" th:href="@{/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
     <link rel="stylesheet" th:href="@{/js/lay-module/treeSelect/treeSelect.css}" media="all">
@@ -25,8 +25,8 @@
 <div class="layuimini-container">
     <div class="layuimini-main">
         <div>
-            <th:block th:replace="view/admin/role/control::search_html"/>
-            <table id="role-table" class="layui-table" lay-filter="role-table"></table>
+            <th:block th:replace="view/admin/user/control::search_html"/>
+            <table id="user-table" class="layui-table" lay-filter="user-table"></table>
         </div>
     </div>
 </div>
@@ -35,61 +35,46 @@
 <th:block th:replace="view/admin/user/control::table_tool_bar"/>
 <th:block th:replace="view/admin/user/control::table_line_operate"/>
 <th:block th:replace="view/admin/user/control::status_switch"/>
+<th:block th:replace="view/admin/user/control::avatar_template"/>
+<th:block th:replace="view/admin/user/control::gender_template"/>
 
 <script th:src="@{/lib/layui-v2.8.18/layui.js}" charset="utf-8"></script>
+<script th:src="@{/lib/jquery-3.4.1/jquery-3.4.1.min.js}" charset="utf-8"></script>
 <script th:src="@{/js/twocats-constant.js}" charset="utf-8"></script>
+<script th:src="@{/js/twocats-validate.js}" charset="utf-8"></script>
 <script th:src="@{/js/lay-config.js}" charset="utf-8"></script>
 <script th:inline="javascript">
-    layui.use(['jquery', 'layer', 'form', 'table', 'eleTree'],
+    layui.use(['jquery', 'layer', 'form', 'table', 'transfer'],
         function () {
             const $ = layui.jquery
             const layer = layui.layer
             const form = layui.form
             const table = layui.table;
-            const eleTree = layui.eleTree;
+            const transfer = layui.transfer;
 
             const addBtn = $('#add-btn')
             const updateBtn = $('#update-btn')
             const cancelBtn = $('#cancel-btn')
+            const usernameInput = $('#form-username')
+            const passwordInput = $('#form-password')
 
-            let roleName = $("input[name='roleNameSearch']").val().trim()
-            let roleCode = $("input[name='roleCodeSearch']").val().trim()
             let addOrUpdatePageIndex = null;
+            let transferData = [];
+            let transferSelectData = [];
 
-            let permissionTree = eleTree.render({
-                id: 'permission-tree',
-                url: '/api/permission/list',
-                method: 'post',
-                contentType: 'application/json',
-                headers: {
-                    'Accept': 'application/json'
-                },
-                elem: '#permission-tree',
-                showCheckbox: true,
-                renderAfterExpand: false,
-                showLine: true,
-                accordion: true,
-                indent: 30,
-                request: {
-                    key: 'id',
-                    name: 'title',
-                    children: 'child'
-                },
-                response: {
-                    statusName: "code",
-                    statusCode: 0,
-                    dataName: "data"
-                }
-            })
+            transfer.render({
+                elem: '#role_transfer',
+                id: 'role_transfer',
+                title: ['未选择角色', '已选择角色'],
+                height: 248,
+                data: transferData
+            });
 
             table.render({
-                elem: '#role-table',
-                url: '/api/role/list',
+                elem: '#user-table',
+                url: '/api/user/list',
                 method: 'post',
-                where: {
-                    roleName: roleName,
-                    roleCode: roleCode
-                },
+                where: getWhereCondition(),
                 contentType: 'application/json',
                 headers: {
                     'Accept': 'application/json'
@@ -108,18 +93,21 @@
                 },
                 toolbar: '#table-tool-bar',
                 defaultToolbar: [],
-                height: 'full-35',
                 css: [
                     '.layui-table-tool-temp{padding-right: 145px;}'
                 ].join(''),
                 cellMinWidth: 80,
                 page: true,
                 cols: [ [
+                    {type: 'numbers', title: '序号'},
                     {type: 'checkbox'},
-                    {field: 'id', width: 80, title: 'ID', align: 'center'},
-                    {field: 'roleName', width: 200, title: '角色名称', align: 'center'},
-                    {field: 'roleCode', width: 200, title: '角色编码', align: 'center'},
-                    {field: 'remark', title: '备注', align: 'center'},
+                    {field: 'username', width: 120, title: '用户名', align: 'center'},
+                    {field: 'realName', width: 120, title: '真实姓名', align: 'center'},
+                    {field: 'nickname', width: 120, title: '昵称', align: 'center'},
+                    {field: 'avatar', width: 80, title: '头像', align: 'center', templet: '#avatar_template'},
+                    {field: 'gender', width: 80, title: '性别', align: 'center', templet: '#gender_template'},
+                    {field: 'email', title: '邮箱地址', align: 'center'},
+                    {field: 'mobile', width:120, title: '手机号码', align: 'center'},
                     {field: 'status', width: 100, align: 'center', templet: '#status_switch', title: '状态'},
                     {field: 'createTime', width: 180, align: 'center', title: '创建时间'},
                     {templet: '#table-line-operate', width: 120, align: 'center', title: '操作'}
@@ -137,28 +125,38 @@
             /**
              * 监听表头工具栏事件
              */
-            table.on('toolbar(role-table)', function (obj) {
+            table.on('toolbar(user-table)', function (obj) {
                 if (obj.event === 'add') {
                     clearVerify()
+                    reloadTransfer()
+                    usernameInput.parents('.layui-form-item').css('display', 'block');
+                    passwordInput.parents('.layui-form-item').css('display', 'block');
                     addBtn.removeClass('layui-hide')
                     updateBtn.addClass('layui-hide')
                     form.val('add_or_update', {
-                        "roleName": '',
-                        "roleCode": '',
-                        "remark": '',
-                    });
-                    permissionTree.unCheckNodes() // 清空选择的节点
+                        "username": '',
+                        "password": '',
+                        "realName": '',
+                        "nickname": '',
+                        "gender": '',
+                        "email": '',
+                        "mobile": '',
+                    })
                     addOrUpdatePageIndex = layer.open({
-                        title: ['添加角色', 'font-size: 20px;'],
+                        title: ['添加用户', 'font-size: 20px;'],
                         type: 1,
                         shade: 0.2,
-                        area: ['430px', '600px'],
+                        area: ['auto', '600px'],
                         resize: false,
                         content: $('#add_or_update'),
+                        cancel: function(index){
+                            $('#add_or_update').css('display', 'none')
+                            layer.close(index);
+                        }
                     })
                 }
                 if (obj.event === 'delete') {
-                    let checkStatus = table.checkStatus('role-table')
+                    let checkStatus = table.checkStatus('user-table')
                     let data = checkStatus.data
                     if (data.length === 0) {
                         layer.msg('请选择要删除的数据', {icon: 0});
@@ -175,7 +173,7 @@
             /**
              * 监听行工具栏事件
              */
-            table.on('tool(role-table)', function (obj) {
+            table.on('tool(user-table)', function (obj) {
                 let data = obj.data;
                 let layEvent = obj.event;
 
@@ -184,10 +182,12 @@
                 }
                 if (layEvent === 'edit') {
                     clearVerify()
+                    usernameInput.parents('.layui-form-item').css('display', 'none');
+                    passwordInput.parents('.layui-form-item').css('display', 'none');
                     updateBtn.removeClass('layui-hide')
                     addBtn.addClass('layui-hide')
                     $.ajax({
-                        url: '/api/role/detail',
+                        url: '/api/user/detail',
                         type: 'POST',
                         contentType: 'application/json',
                         headers: {
@@ -200,19 +200,24 @@
                             if (response.code === web_status.SUCCESS) {
                                 form.val('add_or_update', {
                                     "id": response.data.id,
-                                    "roleName": response.data.roleName,
-                                    "roleCode": response.data.roleCode,
-                                    "remark": response.data.remark
+                                    "gender": response.data.gender,
+                                    "realName": response.data.realName,
+                                    "nickname": response.data.nickname,
+                                    "email": response.data.email,
+                                    "mobile": response.data.mobile
                                 });
-                                permissionTree.setChecked(response.data.menus, true)
-
+                                reloadTransfer(response.data.roleIds)
                                 addOrUpdatePageIndex = layer.open({
-                                    title: ['修改角色', 'font-size: 20px;'],
+                                    title: ['修改用户', 'font-size: 20px;'],
                                     type: 1,
                                     shade: 0.2,
-                                    area: ['430px', '600px'],
+                                    area: ['auto', '600px'],
                                     resize: false,
                                     content: $('#add_or_update'),
+                                    cancel: function(index){
+                                        $('#add_or_update').css('display', 'none')
+                                        layer.close(index);
+                                    }
                                 })
                             } else {
                                 layer.msg(response.msg, {icon: 5});
@@ -226,12 +231,12 @@
             })
 
             /**
-             * 调整角色状态
+             * 调整用户状态
              */
             form.on('switch(form-status)', function (obj) {
                 const id = this.value;
                 $.ajax({
-                    url: '/api/role/change/status',
+                    url: '/api/user/change/status',
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {
@@ -248,7 +253,7 @@
                             layer.msg(response.msg, {icon: 5});
                         }
                     },
-                    error: function (xhr, status, error) {
+                        error: function (xhr, status, error) {
                         layer.msg("网络异常", {icon: 5});
                         reloadTable()
                     }
@@ -259,17 +264,9 @@
              * 自定义表单校验规则
              */
             form.verify({
-                required: function (value, item) {
-                    let othis = $(item);
-                    if (!value) {
-                        othis.addClass('error-form-item')
-                        othis.nextAll(".error-msg").html(othis.attr('lay-msg') || '必填项不能为空')
-                        return true
-                    }
-                    othis.removeClass('error-form-item')
-                    othis.nextAll(".error-msg").empty()
-                    return false
-                }
+                required: requiredValidate,
+                email: emailValidate,
+                phone: phoneValidate
             })
 
             addBtn.on('click', () => {
@@ -282,25 +279,31 @@
                 if (!validate) {
                     return
                 }
-
                 let data = form.val('add_or_update')
                 $.ajax({
-                    url: '/api/role/save',
+                    url: '/api/user/save',
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {
                         'Accept': 'application/json'
                     },
                     data: JSON.stringify({
-                        roleName: data.roleName,
-                        roleCode: data.roleCode,
-                        remark: data.remark,
-                        menus: getCheckedIds,
+                        username: data.username,
+                        password: data.password,
+                        realName: data.realName,
+                        nickname: data.nickname,
+                        gender: data.gender,
+                        email: data.email,
+                        mobile: data.mobile,
+                        roleIds: transfer.getData('role_transfer').map(item => {
+                            return item.value
+                        })
                     }),
                     success: function (response) {
                         if (response.code === web_status.SUCCESS) {
                             layer.msg(response.msg, {icon: 1})
-                            layer.close(addOrUpdatePageIndex);
+                            layer.close(addOrUpdatePageIndex)
+                            $('#add_or_update').css('display', 'none')
                             reloadTable()
                         } else {
                             layer.msg(response.msg, {icon: 5})
@@ -315,7 +318,7 @@
             updateBtn.on('click', () => {
                 let data = form.val('add_or_update')
                 $.ajax({
-                    url: '/api/role/edit',
+                    url: '/api/user/edit',
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {
@@ -323,15 +326,20 @@
                     },
                     data: JSON.stringify({
                         id: data.id,
-                        roleName: data.roleName,
-                        roleCode: data.roleCode,
-                        remark: data.remark,
-                        menus: getCheckedIds(),
+                        realName: data.realName,
+                        nickname: data.nickname,
+                        gender: data.gender,
+                        email: data.email,
+                        mobile: data.mobile,
+                        roleIds: transfer.getData('role_transfer').map(item => {
+                            return item.value
+                        })
                     }),
                     success: function (response) {
                         if (response.code === web_status.SUCCESS) {
                             layer.msg(response.msg, {icon: 1})
-                            layer.close(addOrUpdatePageIndex);
+                            layer.close(addOrUpdatePageIndex)
+                            $('#add_or_update').css('display', 'none')
                             reloadTable()
                         } else {
                             layer.msg(response.msg, {icon: 5});
@@ -343,19 +351,20 @@
                 })
             })
             cancelBtn.on('click', () => {
+                $('#add_or_update').css('display', 'none')
                 layer.close(addOrUpdatePageIndex);
             })
 
             /**
-             * 批量删除角色
-             * @param ids 角色的ID列表
+             * 批量删除用户
+             * @param ids 用户的ID列表
              */
             function deleteBatch(ids) {
-                layer.confirm('确定删除此角色吗？', {
+                layer.confirm('确定删除此用户吗？', {
                     btn: ['确定', '关闭']
                 }, function () {
                     $.ajax({
-                        url: '/api/role/delete',
+                        url: '/api/user/delete',
                         type: 'POST',
                         contentType: 'application/json',
                         headers: {
@@ -384,14 +393,9 @@
              * 重载表格
              */
             function reloadTable() {
-                roleName = $("input[name='roleNameSearch']").val().trim()
-                roleCode = $("input[name='roleCodeSearch']").val().trim()
                 // 执行搜索重载
-                table.reloadData('role-table', {
-                    where: {
-                        "roleName": roleName,
-                        "roleCode": roleCode
-                    }
+                table.reloadData('user-table', {
+                    where: getWhereCondition()
                 });
             }
 
@@ -405,30 +409,59 @@
                 })
             }
 
-            function getCheckedIds() {
-                let checkedMenu = permissionTree.getChecked(true, true);
-                let ids = []
-                checkedMenu.forEach(item => {
-                    ids.push(...getIdByMenuItem(item))
-                })
-                return ids
+            function getWhereCondition() {
+                let username = $("input[name='usernameSearch']").val().trim()
+                let realName = $("input[name='realNameSearch']").val().trim()
+                let nickname = $("input[name='nicknameSearch']").val().trim()
+                let gender = $("select[name='genderSearch']").val().trim()
+                let mobile = $("input[name='mobileSearch']").val().trim()
+                let email = $("input[name='emailSearch']").val().trim()
+                return {
+                    username,
+                    realName,
+                    nickname,
+                    gender,
+                    mobile,
+                    email
+                }
             }
 
-            /**
-             * 递归的方式获取权限树中的ID
-             * @param item
-             * @returns {*[]}
-             */
-            function getIdByMenuItem(item) {
-                let ids = []
-                ids.push(item.id)
-                if (item.child && item.child.length > 0) {
-                    item.child.forEach(child => {
-                        ids.push(...getIdByMenuItem(child))
-                    })
-                }
-                return ids
+            function reloadTransfer(ids = []) {
+                transfer.reload('role_transfer', {
+                    data: transferData,
+                    value: ids
+                })
             }
+
+            // 加载数据后重载穿梭框
+            function getTransferData() {
+                $.ajax({
+                    url: '/api/role/transfer',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    success: function (response) {
+                        if (response.code === web_status.SUCCESS) {
+                            let data = response.data
+                            data.forEach(item => {
+                                transferData.push({
+                                    value: item.id,
+                                    title: item.roleName,
+                                    checked: false
+                                })
+                            })
+                        } else {
+                            layer.msg(response.msg, {icon: 5});
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        layer.msg(xhr.responseJson, {icon: 5});
+                    }
+                })
+            }
+            getTransferData()
 
         })
 </script>

@@ -1,13 +1,13 @@
 package tech.twocats.admin.module.admin.domain.vo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Getter;
 import lombok.Setter;
 import tech.twocats.admin.common.enums.GenderEnum;
+import tech.twocats.admin.common.model.vo.PageQuery;
 
 @Getter
 @Setter
-public class UserQuery {
+public class UserQuery extends PageQuery {
 
     /**
      * 用户名

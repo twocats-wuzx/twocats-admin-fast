@@ -41,7 +41,9 @@
 <th:block th:replace="view/admin/menu/control::status_switch"/>
 
 <script th:src="@{/lib/layui-v2.8.18/layui.js}" charset="utf-8"></script>
+<script th:src="@{/lib/jquery-3.4.1/jquery-3.4.1.min.js}" charset="utf-8"></script>
 <script th:src="@{/js/twocats-constant.js}" charset="utf-8"></script>
+<script th:src="@{/js/twocats-validate.js}" charset="utf-8"></script>
 <script th:src="@{/js/lay-config.js}" charset="utf-8"></script>
 <script th:inline="javascript">
     layui.use(['jquery', 'layer', 'treeTable','form', 'treeSelect', 'iconPickerFa'], function () {
@@ -60,7 +62,7 @@
         const targetSelected = $('#form-target')
         const hrefSelected = $('#form-href')
 
-        let title = $("input[name='titleSearch']").val().trim()
+        let titleSearch = $("input[name='titleSearch']").val().trim()
         let addOrUpdatePageIndex = null;
 
         // 渲染图标选择器
@@ -106,7 +108,7 @@
                 }
             },
             where: {
-                'title': title
+                'title': titleSearch
             },
             request: {
                 pageName: 'pageSize',
@@ -176,11 +178,11 @@
          * 监听表格数据筛选事件
          */
         form.on('submit(table-search)', function(data){
-            title = $("input[name='title']").val().trim();
+            titleSearch = $("input[name='titleSearch']").val().trim();
             // 执行搜索重载
             treeTable.reload('menu-table', {
                 where: {
-                    "title": title
+                    "title": titleSearch
                 }
             });
             return false
@@ -212,6 +214,10 @@
                     area: ['460px', 'auto'],
                     resize: false,
                     content: $('#add_or_update'),
+                    cancel: function(index){
+                        $('#add_or_update').css('display', 'none')
+                        layer.close(index);
+                    }
                 })
             }
             if (obj.event === 'delete') {
@@ -272,6 +278,10 @@
                                 area: ['460px', 'auto'],
                                 resize: false,
                                 content: $('#add_or_update'),
+                                cancel: function(index){
+                                    $('#add_or_update').css('display', 'none')
+                                    layer.close(index);
+                                }
                             })
                             pidSelected.val(response.data.pid)
                             pidSelected.change()
@@ -376,10 +386,11 @@
                     if (response.code === web_status.SUCCESS){
                         layer.msg(response.msg,  {icon: 1})
                         layer.close(addOrUpdatePageIndex);
-                        title = $("input[name='title']").val().trim()
+                        $('#add_or_update').css('display', 'none')
+                        titleSearch = $("input[name='titleSearch']").val().trim()
                         treeTable.reload('menu-table', {
                             where: {
-                                "title": title
+                                "title": titleSearch
                             }
                         })
                         renderTreeSelect()
@@ -426,10 +437,11 @@
                     if (response.code === web_status.SUCCESS){
                         layer.msg(response.msg,  {icon: 1})
                         layer.close(addOrUpdatePageIndex);
-                        title = $("input[name='title']").val().trim()
+                        $('#add_or_update').css('display', 'none')
+                        titleSearch = $("input[name='titleSearch']").val().trim()
                         treeTable.reload('menu-table', {
                             where: {
-                                "title": title
+                                "title": titleSearch
                             }
                         })
                         renderTreeSelect()
@@ -445,6 +457,7 @@
         })
 
         cancelBtn.click(() => {
+            $('#add_or_update').css('display', 'none')
             layer.close(addOrUpdatePageIndex);
         })
 

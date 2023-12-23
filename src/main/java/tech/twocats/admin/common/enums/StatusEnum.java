@@ -1,6 +1,7 @@
 package tech.twocats.admin.common.enums;
 
 import com.baomidou.mybatisplus.annotation.IEnum;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 
 import java.util.Objects;
@@ -19,7 +20,13 @@ public enum StatusEnum implements IEnum<String>{
     private final Integer key;
     private final String desc;
 
-    public static StatusEnum getStatusEnumByValue(String value){
+    @Override
+    public String getValue() {
+        return name();
+    }
+
+    @JsonCreator
+    public static StatusEnum fromValue(String value){
         if (value == null || value.trim().isEmpty()){
             return null;
         }
@@ -28,11 +35,6 @@ public enum StatusEnum implements IEnum<String>{
                 return statusEnum;
             }
         }
-        return null;
-    }
-
-    @Override
-    public String getValue() {
-        return name();
+        throw new IllegalArgumentException("Invalid value: " + value);
     }
 }

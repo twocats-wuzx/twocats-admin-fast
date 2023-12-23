@@ -2,7 +2,11 @@ package tech.twocats.admin.common.enums;
 
 
 import com.baomidou.mybatisplus.annotation.IEnum;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
+import org.springframework.util.StringUtils;
+
+import java.util.Objects;
 
 @Getter
 public enum GenderEnum implements IEnum<String> {
@@ -32,5 +36,18 @@ public enum GenderEnum implements IEnum<String> {
     @Override
     public String getValue() {
         return name();
+    }
+
+    @JsonCreator
+    public static GenderEnum fromValue(String value) {
+        if (!StringUtils.hasLength(value)){
+            return null;
+        }
+        for (GenderEnum e : values()) {
+            if (Objects.equals(e.getValue(), value)) {
+                return e;
+            }
+        }
+        throw new IllegalArgumentException("Invalid value: " + value);
     }
 }

@@ -117,15 +117,12 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
         if (CollectionUtils.isEmpty(menuIds)){
             return new ArrayList<>(1);
         }
-        List<Menu> menus = this.lambdaQuery()
+        return this.lambdaQuery()
                 .select(Menu::getId)
                 .eq(Menu::getStatus, true)
                 .in(Menu::getId, menuIds)
-                .list();
-        if (CollectionUtils.isEmpty(menus)){
-            return new ArrayList<>(1);
-        }
-        return menus.stream()
+                .list()
+                .stream()
                 .map(Menu::getId)
                 .filter(menuIds::contains)
                 .collect(Collectors.toList());

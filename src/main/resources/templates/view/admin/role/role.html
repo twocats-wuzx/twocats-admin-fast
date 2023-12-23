@@ -37,7 +37,9 @@
 <th:block th:replace="view/admin/role/control::status_switch"/>
 
 <script th:src="@{/lib/layui-v2.8.18/layui.js}" charset="utf-8"></script>
+<script th:src="@{/lib/jquery-3.4.1/jquery-3.4.1.min.js}" charset="utf-8"></script>
 <script th:src="@{/js/twocats-constant.js}" charset="utf-8"></script>
+<script th:src="@{/js/twocats-validate.js}" charset="utf-8"></script>
 <script th:src="@{/js/lay-config.js}" charset="utf-8"></script>
 <script th:inline="javascript">
     layui.use(['jquery', 'layer', 'form', 'table', 'eleTree'],
@@ -108,15 +110,14 @@
                 },
                 toolbar: '#table-tool-bar',
                 defaultToolbar: [],
-                height: 'full-35',
                 css: [
                     '.layui-table-tool-temp{padding-right: 145px;}'
                 ].join(''),
                 cellMinWidth: 80,
                 page: true,
                 cols: [ [
+                    {type: 'numbers', title: '序号'},
                     {type: 'checkbox'},
-                    {field: 'id', width: 80, title: 'ID', align: 'center'},
                     {field: 'roleName', width: 200, title: '角色名称', align: 'center'},
                     {field: 'roleCode', width: 200, title: '角色编码', align: 'center'},
                     {field: 'remark', title: '备注', align: 'center'},
@@ -155,6 +156,10 @@
                         area: ['430px', '600px'],
                         resize: false,
                         content: $('#add_or_update'),
+                        cancel: function(index){
+                            $('#add_or_update').css('display', 'none')
+                            layer.close(index);
+                        }
                     })
                 }
                 if (obj.event === 'delete') {
@@ -204,8 +209,7 @@
                                     "roleCode": response.data.roleCode,
                                     "remark": response.data.remark
                                 });
-                                permissionTree.setChecked(response.data.menus, true)
-
+                                permissionTree.setChecked(response.data.menuIds, true)
                                 addOrUpdatePageIndex = layer.open({
                                     title: ['修改角色', 'font-size: 20px;'],
                                     type: 1,
@@ -213,6 +217,10 @@
                                     area: ['430px', '600px'],
                                     resize: false,
                                     content: $('#add_or_update'),
+                                    cancel: function(index){
+                                        $('#add_or_update').css('display', 'none')
+                                        layer.close(index);
+                                    }
                                 })
                             } else {
                                 layer.msg(response.msg, {icon: 5});
@@ -295,12 +303,13 @@
                         roleName: data.roleName,
                         roleCode: data.roleCode,
                         remark: data.remark,
-                        menus: getCheckedIds,
+                        menuIds: getCheckedIds(),
                     }),
                     success: function (response) {
                         if (response.code === web_status.SUCCESS) {
                             layer.msg(response.msg, {icon: 1})
-                            layer.close(addOrUpdatePageIndex);
+                            layer.close(addOrUpdatePageIndex)
+                            $('#add_or_update').css('display', 'none')
                             reloadTable()
                         } else {
                             layer.msg(response.msg, {icon: 5})
@@ -326,12 +335,13 @@
                         roleName: data.roleName,
                         roleCode: data.roleCode,
                         remark: data.remark,
-                        menus: getCheckedIds(),
+                        menuIds: getCheckedIds(),
                     }),
                     success: function (response) {
                         if (response.code === web_status.SUCCESS) {
                             layer.msg(response.msg, {icon: 1})
-                            layer.close(addOrUpdatePageIndex);
+                            layer.close(addOrUpdatePageIndex)
+                            $('#add_or_update').css('display', 'none')
                             reloadTable()
                         } else {
                             layer.msg(response.msg, {icon: 5});
@@ -344,6 +354,7 @@
             })
             cancelBtn.on('click', () => {
                 layer.close(addOrUpdatePageIndex);
+                $('#add_or_update').css('display', 'none')
             })
 
             /**
@@ -406,7 +417,7 @@
             }
 
             function getCheckedIds() {
-                let checkedMenu = permissionTree.getChecked(true, true);
+                let checkedMenu = permissionTree.getChecked(false, true);
                 let ids = []
                 checkedMenu.forEach(item => {
                     ids.push(...getIdByMenuItem(item))

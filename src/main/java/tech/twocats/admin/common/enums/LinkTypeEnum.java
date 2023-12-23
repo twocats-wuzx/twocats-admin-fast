@@ -41,7 +41,7 @@ public enum LinkTypeEnum  implements IEnum<String> {
         if (!StringUtils.hasLength(code)){
             return null;
         }
-        for (LinkTypeEnum e : LinkTypeEnum.values()) {
+        for (LinkTypeEnum e : values()) {
             if (e.code.equals(code)) {
                 return e;
             }

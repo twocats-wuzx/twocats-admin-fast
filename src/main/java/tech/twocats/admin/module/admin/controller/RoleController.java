@@ -12,11 +12,9 @@ import tech.twocats.admin.common.model.vo.CommonPage;
 import tech.twocats.admin.common.model.vo.LongListWrapper;
 import tech.twocats.admin.common.model.vo.LongWrapper;
 import tech.twocats.admin.common.model.vo.Result;
-import tech.twocats.admin.module.admin.domain.vo.MenuRequest;
 import tech.twocats.admin.module.admin.domain.vo.RoleQuery;
 import tech.twocats.admin.module.admin.domain.vo.RoleRequest;
 import tech.twocats.admin.module.admin.domain.vo.RoleVO;
-import tech.twocats.admin.module.admin.service.IRoleMenuService;
 import tech.twocats.admin.module.admin.service.IRoleService;
 
 import javax.validation.constraints.NotNull;
@@ -51,7 +49,7 @@ public class RoleController {
 
     @ResponseBody
     @PostMapping("/api/role/delete")
-    @PreAuthorize("@authCheck.check('menu:del')")
+    @PreAuthorize("@authCheck.check('role:del')")
     public Result<Void> deleteRole(@NotNull @RequestBody LongListWrapper ids){
         roleService.deleteRole(ids);
         return Result.ok();
@@ -59,8 +57,8 @@ public class RoleController {
 
     @ResponseBody
     @PostMapping("/api/role/edit")
-    @PreAuthorize("@authCheck.check('menu:edit')")
-    public Result<Void> editMenu(@RequestBody
+    @PreAuthorize("@authCheck.check('role:edit')")
+    public Result<Void> editRole(@RequestBody
                                  @Validated(value = {ValidateGroup.Edit.class})
                                      RoleRequest request){
         roleService.editRole(request);
@@ -69,11 +67,11 @@ public class RoleController {
 
     @ResponseBody
     @PostMapping("/api/role/change/status")
-    @PreAuthorize("@authCheck.check('menu:edit')")
-    public Result<Void> changeMenuStatus(@RequestBody
+    @PreAuthorize("@authCheck.check('role:edit')")
+    public Result<Void> changeRoleStatus(@RequestBody
                                          @Validated(value = {ValidateGroup.StatusChange.class})
                                              RoleRequest request){
-        roleService.changeMenuStatus(request);
+        roleService.changeRoleStatus(request);
         return Result.ok();
     }
 
@@ -86,9 +84,16 @@ public class RoleController {
 
     @ResponseBody
     @PostMapping("/api/role/detail")
-    @PreAuthorize("@authCheck.check('rolr:detail')")
+    @PreAuthorize("@authCheck.check('role:detail')")
     public Result<RoleVO> getRoleDetail(@RequestBody LongWrapper idWrapper){
         return Result.ok(roleService.getRoleDetail(idWrapper.getKey()));
+    }
+
+    @ResponseBody
+    @PostMapping("/api/role/transfer")
+    @PreAuthorize("@authCheck.check('user:add, user:edit')")
+    public Result<List<RoleVO>> getRoleDetail(){
+        return Result.ok(roleService.getRoleTransfer());
     }
 
 }

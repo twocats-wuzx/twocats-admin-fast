@@ -1,17 +1,12 @@
 package tech.twocats.admin.module.admin.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
-import tech.twocats.admin.module.admin.domain.entity.Menu;
 import tech.twocats.admin.module.admin.domain.entity.Role;
-import tech.twocats.admin.module.admin.domain.entity.RoleMenu;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -27,7 +22,7 @@ public class RoleVO {
 
     private Boolean status;
 
-    private List<Long> menus;
+    private List<Long> menuIds;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
@@ -36,16 +31,16 @@ public class RoleVO {
         if (role == null){
             return null;
         }
-        return getRoleVO(role);
+        return getRoleVOByRole(role);
     }
 
     public static RoleVO fromRole(Role role, List<Long> menuIds){
         if (role == null){
             return null;
         }
-        RoleVO roleVO = getRoleVO(role);
+        RoleVO roleVO = getRoleVOByRole(role);
         // 角色所有的菜单
-        roleVO.setMenus(menuIds);
+        roleVO.setMenuIds(menuIds);
         return roleVO;
     }
 
@@ -54,7 +49,7 @@ public class RoleVO {
      * @param role 角色实体
      * @return 角色VO
      */
-    private static RoleVO getRoleVO(Role role) {
+    private static RoleVO getRoleVOByRole(Role role) {
         RoleVO roleVO = new RoleVO();
         roleVO.setId(role.getId());
         roleVO.setRoleName(role.getRoleName());

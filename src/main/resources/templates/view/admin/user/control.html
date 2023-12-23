@@ -3,12 +3,37 @@
     <form class="layui-form layui-row layui-col-space16">
         <div class="layui-col-md3">
             <div class="layui-input-wrap">
-                <input type="text" name="roleNameSearch" value="" placeholder="角色名称" class="layui-input" lay-affix="clear">
+                <input type="text" name="usernameSearch" value="" placeholder="用户名" class="layui-input" lay-affix="clear">
             </div>
         </div>
         <div class="layui-col-md3">
             <div class="layui-input-wrap">
-                <input type="text" name="roleCodeSearch" value="" placeholder="角色编码" class="layui-input" lay-affix="clear">
+                <input type="text" name="realNameSearch" value="" placeholder="真实姓名" class="layui-input" lay-affix="clear">
+            </div>
+        </div>
+        <div class="layui-col-md3">
+            <div class="layui-input-wrap">
+                <input type="text" name="nicknameSearch" value="" placeholder="昵称" class="layui-input" lay-affix="clear">
+            </div>
+        </div>
+        <div class="layui-col-md3">
+            <div class="layui-input-wrap">
+                <select lay-affix="clear" name="genderSearch">
+                    <option value="" selected>请选择性别</option>
+                    <option value="MALE">男</option>
+                    <option value="FEMALE">女</option>
+                    <option value="SECRECY">保密</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-col-md3">
+            <div class="layui-input-wrap">
+                <input type="text" name="mobileSearch" value="" placeholder="手机号码" class="layui-input" lay-affix="clear">
+            </div>
+        </div>
+        <div class="layui-col-md3">
+            <div class="layui-input-wrap">
+                <input type="text" name="emailSearch" value="" placeholder="邮箱地址" class="layui-input" lay-affix="clear">
             </div>
         </div>
         <div class="layui-btn-container layui-col-md6">
@@ -35,6 +60,26 @@
     <input type="checkbox" name="status" value="{{= d.id }}" title="启用|禁用" lay-skin="switch" lay-filter="form-status" {{= d.status ? "checked" : "" }}>
 </script>
 
+<!-- 表格启用禁用状态 -->
+<script type="text/html" id="avatar_template"  th:fragment="avatar_template" th:inline="none">
+    {{#  if(d.avatar){ }}
+        <img src="{{= d.avatar }}" style="width: 25px; height: 25px; border-radius: 50%;" alt="">
+    {{#  } else { }}
+
+    {{#  } }}
+</script>
+
+<!-- 表格启用禁用状态 -->
+<script type="text/html" id="gender_template"  th:fragment="gender_template" th:inline="none">
+    {{#  if(d.gender === 'MALE'){ }}
+        <span>男</span>
+    {{#  } else if(d.gender === 'FEMALE') { }}
+        <span>女</span>
+    {{#  } else { }}
+        <span>保密</span>
+    {{#  } }}
+</script>
+
 <!-- 新增或编辑数据功能 -->
 <div th:fragment="add_or_update_html" id="add_or_update" style="display: none">
     <form class="layui-form add-or-update-form" action="" lay-filter="add_or_update">
@@ -45,31 +90,68 @@
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label" for="form-roleName"><span class="required-tag">*</span>角色名称</label>
+            <label class="layui-form-label" for="form-username"><span class="required-tag">*</span>用户名</label>
             <div class="layui-input-block">
-                <input type="text" name="roleName" id="form-roleName" lay-verify="required" lay-msg="角色名称不能为空" placeholder="请输入角色名称" autocomplete="off" class="layui-input">
+                <input type="text" name="username" id="form-username" lay-verify="required" lay-msg="用户名不能为空" placeholder="请输入用户名" autocomplete="off" class="layui-input">
                 <span class="error-msg"></span>
             </div>
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label" for="form-roleCode"><span class="required-tag">*</span>角色编码</label>
+            <label class="layui-form-label" for="form-password"><span class="required-tag">*</span>用户密码</label>
             <div class="layui-input-block">
-                <input type="text" name="roleCode" id="form-roleCode" lay-verify="required" lay-msg="角色编码不能为空" placeholder="请输入角色编码" autocomplete="off" class="layui-input">
+                <input type="password" name="password" id="form-password" lay-verify="required" lay-msg="用户密码不能为空" placeholder="请输入用户密码" autocomplete="off" class="layui-input">
                 <span class="error-msg"></span>
             </div>
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label" for="form-remark">备注</label>
+            <label class="layui-form-label" for="form-gender"><span class="required-tag">*</span>用户性别</label>
             <div class="layui-input-block">
-                <input type="text" name="remark" id="form-remark" placeholder="请输入备注" autocomplete="off" class="layui-input">
+                <select lay-affix="clear" lay-verify="required" name="gender" id="form-gender" lay-msg="用户性别不能为空">
+                    <option value="" selected>请选择性别</option>
+                    <option value="MALE">男</option>
+                    <option value="FEMALE">女</option>
+                    <option value="SECRECY">保密</option>
+                </select>
+                <span class="error-msg"></span>
             </div>
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label">角色权限</label>
-            <div id="permission-tree" class="layui-input-block"></div>
+            <label class="layui-form-label" for="form-realName">真实姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="realName" id="form-realName" placeholder="请输入真实姓名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" for="form-email">邮箱</label>
+            <div class="layui-input-block">
+                <input type="text" name="email" id="form-email" lay-verify="email" lay-msg="邮箱格式错误" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+                <span class="error-msg"></span>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" for="form-mobile">手机号码</label>
+            <div class="layui-input-block">
+                <input type="text" name="mobile" id="form-mobile" lay-verify="phone" lay-msg="手机号码格式错误" placeholder="请输入手机号" autocomplete="off" class="layui-input">
+                <span class="error-msg"></span>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" for="form-nickname">昵称</label>
+            <div class="layui-input-block">
+                <input type="text" name="nickname" id="form-nickname" placeholder="请输入昵称" autocomplete="off" class="layui-input">
+                <span class="error-msg"></span>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户角色</label>
+            <div id="role_transfer" class="layui-input-block"></div>
         </div>
 
         <div style="text-align: right; margin-top: 20px">

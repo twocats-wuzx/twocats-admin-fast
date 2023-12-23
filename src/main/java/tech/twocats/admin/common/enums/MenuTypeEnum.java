@@ -1,7 +1,12 @@
 package tech.twocats.admin.common.enums;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.IEnum;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
+import org.springframework.util.StringUtils;
+
+import java.util.Objects;
 
 @Getter
 public enum MenuTypeEnum implements IEnum<String>{
@@ -28,5 +33,17 @@ public enum MenuTypeEnum implements IEnum<String>{
         return name();
     }
 
+    @JsonCreator
+    public static MenuTypeEnum fromValue(String value) {
+        if (!StringUtils.hasLength(value)){
+            return null;
+        }
+        for (MenuTypeEnum e : values()) {
+            if (Objects.equals(e.getValue(), value)) {
+                return e;
+            }
+        }
+        throw new IllegalArgumentException("Invalid value: " + value);
+    }
 
 }

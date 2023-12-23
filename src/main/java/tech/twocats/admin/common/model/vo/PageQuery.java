@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.Data;
 
 @Data
-public class Page {
+public class PageQuery {
 
     /**
      * 分页大小

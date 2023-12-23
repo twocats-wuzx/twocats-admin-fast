@@ -12,19 +12,22 @@ import java.util.List;
 @Setter
 public class RoleRequest {
 
-    @NotNull(message = "角色ID不能为空", groups = {ValidateGroup.Edit.class, ValidateGroup.StatusChange.class})
+    @NotNull(message = "角色ID不能为空",
+            groups = {ValidateGroup.Edit.class, ValidateGroup.StatusChange.class})
     private Long id;
 
-    @NotBlank(message = "角色名称不能为空", groups = {ValidateGroup.Add.class, ValidateGroup.Edit.class})
+    @NotBlank(message = "角色名称不能为空",
+            groups = {ValidateGroup.Add.class, ValidateGroup.Edit.class})
     private String roleName;
 
-    @NotBlank(message = "角色编码不能为空", groups = {ValidateGroup.Add.class, ValidateGroup.Edit.class})
+    @NotBlank(message = "角色编码不能为空",
+            groups = {ValidateGroup.Add.class, ValidateGroup.Edit.class})
     private String roleCode;
 
     private Boolean status;
 
     private String remark;
 
-    private List<Long> menus;
+    private List<Long> menuIds;
 
 }
