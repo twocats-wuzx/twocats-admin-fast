@@ -17,11 +17,11 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Controller
-public class MenuController {
+public class MenuManagerController {
 
     private final IMenuService menuService;
 
-    public MenuController(IMenuService menuService) {
+    public MenuManagerController(IMenuService menuService) {
         this.menuService = menuService;
     }
 

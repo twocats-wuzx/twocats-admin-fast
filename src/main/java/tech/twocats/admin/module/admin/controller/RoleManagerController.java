@@ -22,11 +22,11 @@ import java.util.List;
 
 
 @Controller
-public class RoleController {
+public class RoleManagerController {
 
     private final IRoleService roleService;
 
-    public RoleController(IRoleService roleService) {
+    public RoleManagerController(IRoleService roleService) {
         this.roleService = roleService;
     }
 

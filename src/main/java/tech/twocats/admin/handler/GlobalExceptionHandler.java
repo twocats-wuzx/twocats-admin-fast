@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Order
 @ControllerAdvice(assignableTypes = {})
-public class GlobalAjaxExceptionHandler {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
     public ModelAndView baseExceptionHandler(BaseException e, HttpServletRequest request){

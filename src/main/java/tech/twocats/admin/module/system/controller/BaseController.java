@@ -44,9 +44,15 @@ public class BaseController {
      */
     @RequestMapping(value = {"/admin/index"})
     public String index(@AuthenticationPrincipal UserDetailDTO userDetail, Model model) {
-        model.addAttribute("name", StringUtils.hasLength(userDetail.getRealName())
-                ? userDetail.getRealName()
-                : userDetail.getNickname());
+        String name = userDetail.getUsername();
+        if (StringUtils.hasLength(userDetail.getNickname())){
+            name = userDetail.getNickname();
+        }
+        if (StringUtils.hasLength(userDetail.getRealName())){
+            name = userDetail.getRealName();
+        }
+        model.addAttribute("name", name);
+        model.addAttribute("avatar", userDetail.getAvatar());
         return "index";
     }
 

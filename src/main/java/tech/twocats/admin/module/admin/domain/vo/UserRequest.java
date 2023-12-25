@@ -30,15 +30,8 @@ public class UserRequest {
      * 密码
      */
     @NotBlank(message = "用户密码不能为空",
-            groups = {ValidateGroup.Add.class, ValidateGroup.Edit.class, ValidateGroup.RePassword.class})
+            groups = {ValidateGroup.Add.class, ValidateGroup.Edit.class})
     private String password;
-
-    /**
-     * 新用户密码
-     */
-    @NotBlank(message = "新密码不能为空",
-            groups = {ValidateGroup.RePassword.class})
-    private String newPassword;
 
     /**
      * 真实姓名

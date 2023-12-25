@@ -8,6 +8,8 @@ import tech.twocats.admin.module.admin.domain.entity.User;
 import tech.twocats.admin.module.admin.domain.vo.UserQuery;
 import tech.twocats.admin.module.admin.domain.vo.UserRequest;
 import tech.twocats.admin.module.admin.domain.vo.UserVO;
+import tech.twocats.admin.module.system.domain.vo.RePasswordRequest;
+import tech.twocats.admin.module.system.domain.vo.UserSettingRequest;
 
 import java.util.List;
 
@@ -65,4 +67,16 @@ public interface IUserService extends IService<User> {
      * @return 用户详情
      */
     UserVO getUserDetail(Long key);
+
+    /**
+     * 重新设置用户密码
+     * @param request 请求类
+     */
+    void resetUserPassword(RePasswordRequest request);
+
+    /**
+     * 重新设置用户密码
+     * @param request 请求类
+     */
+    void updateUserInfo(UserSettingRequest request);
 }

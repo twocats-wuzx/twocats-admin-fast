@@ -20,11 +20,11 @@ import tech.twocats.admin.module.admin.service.IUserService;
 import javax.validation.constraints.NotNull;
 
 @Controller
-public class UserController {
+public class UserManagerController {
 
     private final IUserService userService;
 
-    public UserController(IUserService userService) {
+    public UserManagerController(IUserService userService) {
         this.userService = userService;
     }
 

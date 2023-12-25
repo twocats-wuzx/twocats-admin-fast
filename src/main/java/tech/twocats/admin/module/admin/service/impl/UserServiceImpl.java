@@ -28,6 +28,8 @@ import tech.twocats.admin.module.admin.service.IMenuService;
 import tech.twocats.admin.module.admin.service.IRoleMenuService;
 import tech.twocats.admin.module.admin.service.IUserRoleService;
 import tech.twocats.admin.module.admin.service.IUserService;
+import tech.twocats.admin.module.system.domain.vo.RePasswordRequest;
+import tech.twocats.admin.module.system.domain.vo.UserSettingRequest;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -219,6 +221,39 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 .collect(Collectors.toList());
         roleIds.remove(AppConstant.SUPER_ADMIN_ROLE_ID);
         return UserVO.fromUser(user, roleIds);
+    }
+
+    /**
+     * 重新设置用户密码
+     * @param request 请求类
+     */
+    @Override
+    public void resetUserPassword(RePasswordRequest request) {
+        // 判断用户是否存在，不存在抛出异常，存在则修改密码
+        User user = this.lambdaQuery()
+                .eq(User::getId, request.getUserId())
+                .oneOpt()
+                .orElseThrow(() -> new BaseException(SystemError.INVALID_PARAMETER, "请求异常"));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())){
+            throw new BaseException(SystemError.INVALID_PARAMETER, "历史密码错误，如忘记密码请联系管理员!!!");
+        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        this.updateById(user);
+    }
+
+    /**
+     * 更新用户信息
+     * @param request 用户信息参数
+     */
+    @Override
+    public void updateUserInfo(UserSettingRequest request) {
+        User user = this.lambdaQuery()
+                .eq(User::getId, request.getUserId())
+                .oneOpt()
+                .orElseThrow(() -> new BaseException(SystemError.INVALID_PARAMETER, "请求异常"));
+        user = UserSettingRequest.updateUser(user, request);
+        this.updateById(user);
     }
 
 }

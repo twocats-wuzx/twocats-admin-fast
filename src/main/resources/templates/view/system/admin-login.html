@@ -16,8 +16,6 @@
     <![endif]-->
     <!--<link rel="stylesheet" th:href="@{/css/login.css}">-->
 
-    <link rel="stylesheet" th:href="@{/lib/bootstrap-4/css/bootstrap.min.css}" media="all" />
-    <link rel="stylesheet" th:href="@{/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
     <link rel="stylesheet" th:href="@{/css/custom.css}" media="all">
     <style>
         body{ background-color: #f5f5f5; }
@@ -87,8 +85,6 @@
 
 <script th:src="@{/lib/layui-v2.8.18/layui.js}" charset="utf-8"></script>
 <script th:src="@{/lib/jquery-3.4.1/jquery-3.4.1.min.js}" charset="utf-8"></script>
-
-<script th:src="@{/lib/bootstrap-4/js/bootstrap.bundle.min.js}" charset="utf-8"></script>
 <script th:src="@{/js/twocats-constant.js}" charset="utf-8"></script>
 <script th:src="@{/js/twocats-validate.js}" charset="utf-8"></script>
 <script>
@@ -152,7 +148,7 @@
                     layer.msg(error)
                     changeLoadStatus(false)
                 }
-            });
+            })
             return false
         })
 

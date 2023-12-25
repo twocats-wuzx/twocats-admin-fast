@@ -45,3 +45,24 @@ const phoneValidate = function phoneValidate(value, item) {
     othis.nextAll(".error-msg").empty()
     return false
 }
+
+const againValueValidate = function againValueValidate(value, item) {
+    let othis = $(item);
+    if (othis.attr('pause-verify') ){
+        return true
+    }
+
+    let name = othis.attr('name')
+    if (!name){
+        return true
+    }
+    let equalsValue = othis.closest('.layui-form').find('[lay-equals=' + name +']').val()
+    if (equalsValue && value && value !== equalsValue) {
+        othis.addClass('error-form-item')
+        othis.nextAll(".error-msg").html('两次输入值不一致')
+        return true
+    }
+    othis.removeClass('error-form-item')
+    othis.nextAll(".error-msg").empty()
+    return false
+}

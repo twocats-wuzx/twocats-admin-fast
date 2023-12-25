@@ -10,5 +10,4 @@ public interface ValidateGroup {
 
     class UploadAvatar{}
 
-    class RePassword{}
 }
