@@ -20,79 +20,23 @@
     <link rel="stylesheet" th:href="@{/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
     <link rel="stylesheet" th:href="@{/css/custom.css}" media="all">
     <style>
-        /*.container {*/
-        /*    display: flex;*/
-        /*    justify-content: center;*/
-        /*    align-items: center;*/
-        /*}*/
-        body{
-            background-color: #efefef;
-        }
-        .login-top {
-            font-size: 30px;
-            line-height: 100px;
-            text-align: center;
-            margin-top: 30px;
-        }
-        .container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            max-width: 400px;
-            border-radius: 15px;
-            padding: 20px 50px;
-        }
+        body{ background-color: #f5f5f5; }
+        .login-top { font-size: 30px; line-height: 100px; text-align: center; margin-top: 20px; }
+        .container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 400px; border-radius: 15px; padding: 20px 50px; }
 
-        .layui-form-label{
-            width: 110px;
-            display: block;
-            text-align: left;
-            padding: 9px 0 4px 0;
-        }
+        .layui-form-label{ width: 110px; display: block; text-align: left; padding: 9px 0 4px 0; }
+        .layui-form-item { margin-bottom: 10px; }
 
-        .container .layui-input{
-            padding-left: 40px;
-        }
+        #login-form .layui-input{ padding-left: 40px; height: 40px; border-radius: 6px; }
+        .container .layui-input-prefix{ font-size: 21px; line-height: 35px; }
+        .container .layui-icon{ font-size: 21px; }
 
-        .container .layui-input-prefix{
-            font-size: 21px;
-            line-height: 35px;
-        }
+        #login-btn, #login-btn-loading{ width: 100%; margin: 26px 0 50px 0; border-radius: 8px; height: 40px; }
+        #login-btn-loading{ background-color: #1394f2; }
+        #login-btn-loading[disabled] { color: white !important; }
 
-        .container .layui-icon{
-            font-size: 21px;
-        }
-
-        #login-btn, #login-btn-loading{
-            width: 100%;
-            margin: 26px 0 50px 0;
-            border-radius: 8px;
-            height: 40px;
-        }
-
-        #login-btn-loading{
-            background-color: #1394f2;
-        }
-        #login-btn-loading[disabled] {
-            color: white !important;
-        }
-
-        .footer {
-            left: 0;
-            bottom: 0;
-            color: #555555;
-            width: 100%;
-            position: absolute;
-            text-align: center;
-            line-height: 30px;
-            padding-bottom: 10px;
-            font-size: 14px;
-        }
-
-        .footer a, .footer span {
-            color: #555555;
-        }
+        .footer { left: 0; bottom: 0; color: #555555; width: 100%; position: absolute; text-align: center; line-height: 30px; padding-bottom: 10px; font-size: 14px; }
+        .footer a, .footer span { color: #555555; }
     </style>
 </head>
 <body>
@@ -101,7 +45,7 @@
         <div class="login-top">
             <span>两只猫管理后台</span>
         </div>
-        <form class="layui-form login-bottom" lay-filter="admin-login">
+        <form class="layui-form login-bottom" id="login-form" lay-filter="admin-login">
             <label class="layui-form-label"><span class="required-tag">*</span>用户密码</label>
             <div class="layui-form-item">
                 <div class="layui-input-wrap">
@@ -127,8 +71,8 @@
             </div>
 
             <div style="text-align: right;">
-                <button type="button" id="login-btn" class="layui-btn table-bth layui-btn-normal">登录</button>
-                <button type="button" id="login-btn-loading" style="display: none" class="layui-btn table-bth layui-btn-normal layui-disabled" disabled>
+                <button type="button" id="login-btn" class="layui-btn layui-btn-normal">登录</button>
+                <button type="button" id="login-btn-loading" style="display: none" class="layui-btn layui-btn-normal layui-disabled" disabled>
                     登录中
                     <i class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop"></i>
                 </button>
