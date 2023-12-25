@@ -38,4 +38,4 @@ app:
     title: 两只猫管理后台
     image: /images/logo.png
     href: /admin/index
-debug: true
+debug: false

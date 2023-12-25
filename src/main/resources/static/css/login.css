@@ -22,29 +22,25 @@
     letter-spacing: 0;
 }
 
+/* 登录页面图标 */
 .login-main .login-bottom .center .item .icon-1 {
     background: url(../images/icon-login.png) no-repeat 1px 0;
 }
-
 .login-main .login-bottom .center .item .icon-2 {
     background: url(../images/icon-login.png) no-repeat -54px 0;
 }
-
 .login-main .login-bottom .center .item .icon-3 {
     background: url(../images/icon-login.png) no-repeat -106px 0;
 }
-
 .login-main .login-bottom .center .item .icon-4 {
     background: url(../images/icon-login.png) no-repeat 0 -43px;
     position: absolute;
     right: -10px;
     cursor: pointer;
 }
-
 .login-main .login-bottom .center .item .icon-5 {
     background: url(../images/icon-login.png) no-repeat -55px -43px;
 }
-
 .login-main .login-bottom .center .item .icon-6 {
     background: url(../images/icon-login.png) no-repeat 0 -93px;
     position: absolute;
@@ -87,22 +83,23 @@
 }
 
 .login-main {
-    width: 428px;
+    width: 380px;
     position: relative;
     float: left;
+    box-shadow: 0px 20px 10px 10px #eeeeee;
 }
 
 .login-main .login-top {
-    height: 117px;
+    height: 100px;
     background-color: #148be4;
-    border-radius: 12px 12px 0 0;
+    border-radius: 8px 8px 0 0;
     font-family: SourceHanSansCN-Regular;
     font-size: 30px;
     font-weight: 400;
     font-stretch: normal;
     letter-spacing: 0;
     color: #fff;
-    line-height: 117px;
+    line-height: 100px;
     text-align: center;
     overflow: hidden;
     -webkit-transform: rotate(0);

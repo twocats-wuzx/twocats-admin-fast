@@ -43,7 +43,7 @@ public class LoginController {
 
     @RequestMapping("/admin/login")
     public String loginView(){
-        return "login";
+        return "view/system/admin-login";
     }
 
     /**

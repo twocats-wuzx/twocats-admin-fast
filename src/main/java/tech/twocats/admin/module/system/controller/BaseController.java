@@ -43,7 +43,6 @@ public class BaseController {
      * 首页
      */
     @RequestMapping(value = {"/admin/index"})
-    //@PreAuthorize(value = "isAuthenticated()")
     public String index(@AuthenticationPrincipal UserDetailDTO userDetail, Model model) {
         model.addAttribute("name", StringUtils.hasLength(userDetail.getRealName())
                 ? userDetail.getRealName()
