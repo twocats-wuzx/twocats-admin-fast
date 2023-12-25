@@ -267,17 +267,7 @@
              * 自定义表单校验规则
              */
             form.verify({
-                required: function (value, item) {
-                    let othis = $(item);
-                    if (!value) {
-                        othis.addClass('error-form-item')
-                        othis.nextAll(".error-msg").html(othis.attr('lay-msg') || '必填项不能为空')
-                        return true
-                    }
-                    othis.removeClass('error-form-item')
-                    othis.nextAll(".error-msg").empty()
-                    return false
-                }
+                required: requiredValidate
             })
 
             addBtn.on('click', () => {

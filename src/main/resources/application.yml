@@ -27,6 +27,9 @@ mybatis-plus:
     default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
     #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
+server:
+  port: 9000
+
 app:
   home-info:
     title: 首页

@@ -1,7 +1,6 @@
 package tech.twocats.admin.module.admin.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +8,6 @@ import tech.twocats.admin.common.ValidateGroup;
 import tech.twocats.admin.common.model.vo.Result;
 import tech.twocats.admin.common.model.vo.LongListWrapper;
 import tech.twocats.admin.common.model.vo.LongWrapper;
-import tech.twocats.admin.module.system.domain.dto.UserDetailDTO;
 import tech.twocats.admin.module.admin.domain.vo.MenuQuery;
 import tech.twocats.admin.module.admin.domain.vo.MenuRequest;
 import tech.twocats.admin.module.admin.domain.vo.MenuVO;
@@ -82,15 +80,15 @@ public class MenuController {
     @ResponseBody
     @PostMapping("/api/permission/list")
     @PreAuthorize("@authCheck.check('role:add', 'role:edit')")
-    public Result<List<MenuVO>> getAllMenus(@AuthenticationPrincipal UserDetailDTO userDetailDTO){
-        return Result.ok(menuService.getPermissionsByUserId(userDetailDTO.getId()));
+    public Result<List<MenuVO>> getAllMenus(){
+        return Result.ok(menuService.getPermissions());
     }
 
     @ResponseBody
     @PostMapping("/api/parent/menu")
     @PreAuthorize("@authCheck.check('menu:list')")
-    public Result<List<MenuVO>> getMenuParentList(@AuthenticationPrincipal UserDetailDTO userDetailDTO){
-        return Result.ok(menuService.getMenusByUserId(userDetailDTO.getId()));
+    public Result<List<MenuVO>> getMenuParentList(){
+        return Result.ok(menuService.queryMenuOptions());
     }
 
     @ResponseBody

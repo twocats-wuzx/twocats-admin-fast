@@ -61,6 +61,7 @@
         const iconPickerSelected = $('#form-icon')
         const targetSelected = $('#form-target')
         const hrefSelected = $('#form-href')
+        const authoritySelected = $('#form-authority')
 
         let titleSearch = $("input[name='titleSearch']").val().trim()
         let addOrUpdatePageIndex = null;
@@ -271,6 +272,7 @@
                                 "type": response.data.type,
                                 "sort": response.data.sort
                             });
+                            layui.event.call(this, 'form', 'select(form-type)', { "value": response.data.type});
                             addOrUpdatePageIndex = layer.open({
                                 title: ['修改菜单', 'font-size: 20px;'],
                                 type: 1,
@@ -336,17 +338,7 @@
         })
 
         form.verify({
-            required: function(value, item){
-                let othis = $(item);
-                if(!value){
-                    othis.addClass('error-form-item')
-                    othis.nextAll(".error-msg").html(othis.attr('lay-msg') || '必填项不能为空')
-                    return true
-                }
-                othis.removeClass('error-form-item')
-                othis.nextAll(".error-msg").empty()
-                return false
-            }
+            required: requiredValidate
         })
 
         form.on('select(form-type)', function (data) {
@@ -355,14 +347,26 @@
                 iconPickerSelected.parents('.layui-form-item').css('display', 'block');
                 targetSelected.parents('.layui-form-item').css('display', 'block');
                 hrefSelected.parents('.layui-form-item').css('display', 'block');
+                authoritySelected.attr('pause-verify', 'on').parents('.layui-form-item').css('display', 'none');
             }else if (selectedValue === 'PERMISSION'){
                 iconPickerSelected.parents('.layui-form-item').css('display', 'none');
                 targetSelected.parents('.layui-form-item').css('display', 'none');
                 hrefSelected.parents('.layui-form-item').css('display', 'none');
+                authoritySelected.removeAttr('pause-verify').parents('.layui-form-item').css('display', 'block');
             }
         })
 
         updateBtn.click(() => {
+            let validate = true;
+            updateBtn.closest('.layui-form').find('*[lay-verify]').each(function(){
+                if (!form.validate(this) && !$(this).attr('pause-verify')){
+                    validate = false
+                }
+            })
+            if (!validate){
+                return
+            }
+
             let data = form.val('add_or_update')
             $.ajax({
                 url: '/api/menu/edit',
@@ -407,7 +411,7 @@
         addBtn.click(() => {
             let validate = true;
             addBtn.closest('.layui-form').find('*[lay-verify]').each(function(){
-                if (!form.validate(this)){
+                if (!form.validate(this) && !$(this).attr('pause-verify')){
                     validate = false
                 }
             })

@@ -108,9 +108,7 @@ public class MenuRequest {
     public static void checkMenu(MenuRequest request) {
         // 对菜单和权限不同的关键字进行校验
         List<String> errorMessage = new ArrayList<>();
-        if (!StringUtils.hasLength(request.getAuthority())){
-            errorMessage.add("授权标识不能为空");
-        }
+
         switch (request.getType()){
             case MENU:
                 if (request.getTarget() == null && StringUtils.hasLength(request.getHref())){
@@ -124,6 +122,9 @@ public class MenuRequest {
                 }
                 break;
             case PERMISSION:
+                if (!StringUtils.hasLength(request.getAuthority())){
+                    errorMessage.add("授权标识不能为空");
+                }
                 break;
             default:
                 break;

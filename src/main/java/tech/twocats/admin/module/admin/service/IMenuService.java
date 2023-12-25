@@ -24,13 +24,18 @@ public interface IMenuService extends IService<Menu> {
      * 获取用户所有的权限
      * @return 权限列表
      */
-    List<MenuVO> getPermissionsByUserId(Long userId);
+    List<MenuVO> getPermissions();
 
 
     /**
      * 查询菜单树
      */
     List<MenuVO> getMenus(MenuQuery query);
+
+    /**
+     * 查询选择框
+     */
+    List<MenuVO> queryMenuOptions();
 
     /**
      * 保存菜单

@@ -42,8 +42,16 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
     }
 
     @Override
-    public List<MenuVO> getPermissionsByUserId(Long userId) {
-        return getUserMenus(userId, null);
+    public List<MenuVO> getPermissions() {
+        List<Menu> menus = this.lambdaQuery()
+                .select(Menu::getId, Menu::getPid, Menu::getTitle, Menu::getStatus, Menu::getSort)
+                .orderByAsc(Menu::getPid)
+                .orderByAsc(Menu::getSort)
+                .list();
+        if (CollectionUtils.isEmpty(menus)){
+            return new ArrayList<>();
+        }
+        return toMenuTree(menus);
     }
 
     @Override
@@ -54,8 +62,21 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
     @Override
     public List<MenuVO> getMenus(MenuQuery query) {
         List<Menu> menus = this.lambdaQuery()
-                .ne(Menu::getAuthority, "ADMIN")
                 .like(StringUtils.hasLength(query.getTitle()), Menu::getTitle, query.getTitle())
+                .orderByAsc(Menu::getPid)
+                .orderByAsc(Menu::getSort)
+                .list();
+        if (CollectionUtils.isEmpty(menus)){
+            return new ArrayList<>();
+        }
+        return toMenuTree(menus);
+    }
+
+    @Override
+    public List<MenuVO> queryMenuOptions() {
+        List<Menu> menus = this.lambdaQuery()
+                .select(Menu::getId, Menu::getPid, Menu::getTitle, Menu::getStatus, Menu::getSort)
+                .eq(Menu::getType, MenuTypeEnum.MENU)
                 .orderByAsc(Menu::getPid)
                 .orderByAsc(Menu::getSort)
                 .list();
@@ -112,7 +133,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
                 updateWrapper
                         .set(Menu::getHref, request.getHref())
                         .set(Menu::getIcon, request.getIcon())
-                        .set(Menu::getTarget, request.getTarget());
+                        .set(Menu::getTarget, request.getTarget() == null ? AppConstant.EMPTY_STRING : request.getTarget() );
                 break;
             case PERMISSION:
                 updateWrapper
