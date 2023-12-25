@@ -31,14 +31,14 @@ public class RoleController {
     }
 
 
-    @RequestMapping("/role/manager")
+    @RequestMapping("/admin/role/manager")
     @PreAuthorize("@authCheck.check('role:list')")
     public String roleManagerView(){
         return "view/admin/role/role";
     }
 
     @ResponseBody
-    @PostMapping("/api/role/save")
+    @PostMapping("/api/admin/role/save")
     @PreAuthorize("@authCheck.check('role:add')")
     public Result<Void> saveRole(@RequestBody
                                  @Validated(value = {ValidateGroup.Add.class})
@@ -48,7 +48,7 @@ public class RoleController {
     }
 
     @ResponseBody
-    @PostMapping("/api/role/delete")
+    @PostMapping("/api/admin/role/delete")
     @PreAuthorize("@authCheck.check('role:del')")
     public Result<Void> deleteRole(@NotNull @RequestBody LongListWrapper ids){
         roleService.deleteRole(ids);
@@ -56,7 +56,7 @@ public class RoleController {
     }
 
     @ResponseBody
-    @PostMapping("/api/role/edit")
+    @PostMapping("/api/admin/role/edit")
     @PreAuthorize("@authCheck.check('role:edit')")
     public Result<Void> editRole(@RequestBody
                                  @Validated(value = {ValidateGroup.Edit.class})
@@ -66,7 +66,7 @@ public class RoleController {
     }
 
     @ResponseBody
-    @PostMapping("/api/role/change/status")
+    @PostMapping("/api/admin/role/change/status")
     @PreAuthorize("@authCheck.check('role:edit')")
     public Result<Void> changeRoleStatus(@RequestBody
                                          @Validated(value = {ValidateGroup.StatusChange.class})
@@ -76,21 +76,21 @@ public class RoleController {
     }
 
     @ResponseBody
-    @PostMapping("/api/role/list")
+    @PostMapping("/api/admin/role/list")
     @PreAuthorize("@authCheck.check('role:list')")
     public Result<CommonPage<RoleVO>> getRoleList(@RequestBody RoleQuery query){
         return Result.ok(CommonPage.from(roleService.getRoles(query), RoleVO::fromRole));
     }
 
     @ResponseBody
-    @PostMapping("/api/role/detail")
+    @PostMapping("/api/admin/role/detail")
     @PreAuthorize("@authCheck.check('role:detail')")
     public Result<RoleVO> getRoleDetail(@RequestBody LongWrapper idWrapper){
         return Result.ok(roleService.getRoleDetail(idWrapper.getKey()));
     }
 
     @ResponseBody
-    @PostMapping("/api/role/transfer")
+    @PostMapping("/api/admin/role/transfer")
     @PreAuthorize("@authCheck.check('user:add', 'user:edit')")
     public Result<List<RoleVO>> getRoleDetail(){
         return Result.ok(roleService.getRoleTransfer());

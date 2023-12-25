@@ -100,7 +100,7 @@
             //let validateCode = $("input[name='captcha']").val();
             //let rememberMe = $("input[name='remember']").val() === 'on';
             $.ajax({
-                url: "/api/login",
+                url: "/api/admin/login",
                 type: "post",
                 contentType: "application/json",
                 data: JSON.stringify({
@@ -113,7 +113,7 @@
                             icon: 1,
                             time: 500
                         }, function(){
-                            window.location = '/index';
+                            window.location = '/admin/index';
                         });
                     } else {
                         layer.msg(response.msg);

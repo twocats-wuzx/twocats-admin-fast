@@ -81,7 +81,7 @@
                 elem: "#form-pid",
                 search: true,
                 method: "POST",
-                url: '/api/parent/menu',
+                url: '/api/admin/parent/menu',
                 customName: {
                     id: 'id',
                     title: 'title',
@@ -97,7 +97,7 @@
 
         // 渲染表格
         treeTable.render({
-            url: '/api/menu/list',
+            url: '/api/admin/menu/list',
             method: 'post',
             contentType: 'application/json',
             dataType: 'json',
@@ -251,7 +251,7 @@
                 updateBtn.removeClass('layui-hide')
                 addBtn.addClass('layui-hide')
                 $.ajax({
-                    url: '/api/menu/detail',
+                    url: '/api/admin/menu/detail',
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {
@@ -305,7 +305,7 @@
         form.on('switch(form-status)', function(obj){
             const id = this.value;
             $.ajax({
-                url: '/api/menu/change/status',
+                url: '/api/admin/menu/change/status',
                 type: 'POST',
                 contentType: 'application/json',
                 headers: {
@@ -369,7 +369,7 @@
 
             let data = form.val('add_or_update')
             $.ajax({
-                url: '/api/menu/edit',
+                url: '/api/admin/menu/edit',
                 type: 'POST',
                 contentType: 'application/json',
                 headers: {
@@ -421,7 +421,7 @@
 
             let data = form.val('add_or_update')
             $.ajax({
-                url: '/api/menu/save',
+                url: '/api/admin/menu/save',
                 type: 'POST',
                 contentType: 'application/json',
                 headers: {
@@ -474,7 +474,7 @@
                 btn: ['确定', '关闭']
             }, function(){
                 $.ajax({
-                    url: '/api/menu/delete',
+                    url: '/api/admin/menu/delete',
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {

@@ -60,7 +60,7 @@
 
             let permissionTree = eleTree.render({
                 id: 'permission-tree',
-                url: '/api/permission/list',
+                url: '/api/admin/permission/list',
                 method: 'post',
                 contentType: 'application/json',
                 headers: {
@@ -86,7 +86,7 @@
 
             table.render({
                 elem: '#role-table',
-                url: '/api/role/list',
+                url: '/api/admin/role/list',
                 method: 'post',
                 where: {
                     roleName: roleName,
@@ -192,7 +192,7 @@
                     updateBtn.removeClass('layui-hide')
                     addBtn.addClass('layui-hide')
                     $.ajax({
-                        url: '/api/role/detail',
+                        url: '/api/admin/role/detail',
                         type: 'POST',
                         contentType: 'application/json',
                         headers: {
@@ -239,7 +239,7 @@
             form.on('switch(form-status)', function (obj) {
                 const id = this.value;
                 $.ajax({
-                    url: '/api/role/change/status',
+                    url: '/api/admin/role/change/status',
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {
@@ -283,7 +283,7 @@
 
                 let data = form.val('add_or_update')
                 $.ajax({
-                    url: '/api/role/save',
+                    url: '/api/admin/role/save',
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {
@@ -314,7 +314,7 @@
             updateBtn.on('click', () => {
                 let data = form.val('add_or_update')
                 $.ajax({
-                    url: '/api/role/edit',
+                    url: '/api/admin/role/edit',
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {
@@ -356,7 +356,7 @@
                     btn: ['确定', '关闭']
                 }, function () {
                     $.ajax({
-                        url: '/api/role/delete',
+                        url: '/api/admin/role/delete',
                         type: 'POST',
                         contentType: 'application/json',
                         headers: {

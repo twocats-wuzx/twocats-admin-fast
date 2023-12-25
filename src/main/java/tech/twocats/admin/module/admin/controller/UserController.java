@@ -28,14 +28,14 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping("/user/manager")
+    @RequestMapping("/admin/user/manager")
     @PreAuthorize("@authCheck.check('user:list')")
     public String userManagerView(){
         return "view/admin/user/user";
     }
 
     @ResponseBody
-    @PostMapping("/api/user/save")
+    @PostMapping("/api/admin/user/save")
     @PreAuthorize("@authCheck.check('user:add')")
     public Result<Void> saveUser(@RequestBody
                                  @Validated(value = {ValidateGroup.Add.class})
@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @ResponseBody
-    @PostMapping("/api/user/delete")
+    @PostMapping("/api/admin/user/delete")
     @PreAuthorize("@authCheck.check('user:del')")
     public Result<Void> deleteUser(@NotNull @RequestBody LongListWrapper ids){
         userService.deleteUser(ids);
@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @ResponseBody
-    @PostMapping("/api/user/edit")
+    @PostMapping("/api/admin/user/edit")
     @PreAuthorize("@authCheck.check('user:edit')")
     public Result<Void> editUser(@RequestBody
                                  @Validated(value = {ValidateGroup.Edit.class})
@@ -63,7 +63,7 @@ public class UserController {
     }
 
     @ResponseBody
-    @PostMapping("/api/user/change/status")
+    @PostMapping("/api/admin/user/change/status")
     @PreAuthorize("@authCheck.check('user:edit')")
     public Result<Void> changeUserStatus(@RequestBody
                                          @Validated(value = {ValidateGroup.StatusChange.class})
@@ -73,14 +73,14 @@ public class UserController {
     }
 
     @ResponseBody
-    @PostMapping("/api/user/list")
+    @PostMapping("/api/admin/user/list")
     @PreAuthorize("@authCheck.check('user:list')")
     public Result<CommonPage<UserVO>> getUserList(@RequestBody UserQuery query){
         return Result.ok(CommonPage.from(userService.getUsers(query), UserVO::fromUser));
     }
 
     @ResponseBody
-    @PostMapping("/api/user/detail")
+    @PostMapping("/api/admin/user/detail")
     @PreAuthorize("@authCheck.check('user:detail')")
     public Result<UserVO> getUserDetail(@RequestBody LongWrapper idWrapper){
         return Result.ok(userService.getUserDetail(idWrapper.getKey()));

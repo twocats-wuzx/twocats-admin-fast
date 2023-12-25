@@ -18,7 +18,7 @@ import java.io.IOException;
  */
 @Slf4j
 @Component
-public class DefaultAccessDeniedHandler implements AccessDeniedHandler {
+public class AdminAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException exception)

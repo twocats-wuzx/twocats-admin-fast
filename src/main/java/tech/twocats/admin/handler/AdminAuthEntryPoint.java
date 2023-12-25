@@ -2,7 +2,7 @@ package tech.twocats.admin.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
@@ -14,18 +14,17 @@ import java.io.IOException;
  * Created on 2022/8/9
  *
  * @author Wuzhengxian
- * @Desc
  */
 @Slf4j
 @Component
-public class AuthFailureHandler implements AuthenticationFailureHandler {
+public class AdminAuthEntryPoint implements AuthenticationEntryPoint {
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)
             throws IOException, ServletException {
-        log.info("==> authentication failure, message: {}", exception.getMessage());
+        log.info("==> authentication failure, message: {}", exception.getMessage(), exception);
         response.reset();
-        response.sendRedirect("/login");
+        response.sendRedirect("/admin/login");
     }
 
 }

@@ -72,7 +72,7 @@
                             <hr>
                         </dd>
                         <dd>
-                            <a href="/api/logout" class="login-out">退出登录</a>
+                            <a href="/api/admin/logout" class="login-out">退出登录</a>
                         </dd>
                     </dl>
                 </li>
@@ -133,15 +133,15 @@
             miniTongji = layui.miniTongji;
 
         const options = {
-            iniUrl: "/init",    // 初始化接口
-            clearUrl: "api/clear.json", // 缓存清理接口
-            urlHashLocation: true,      // 是否打开hash定位
-            bgColorDefault: false,      // 主题默认配置
+            iniUrl: "/admin/init",    // 初始化接口
+            clearUrl: "api/clear.json",  // 缓存清理接口
+            urlHashLocation: false,      // 是否打开hash定位
+            bgColorDefault: false,       // 主题默认配置
             multiModule: false,          // 是否开启多模块
-            menuChildOpen: false,       // 是否默认展开菜单
-            loadingTime: 0,           // 初始化加载时间
-            pageAnim: true,             // iframe窗口动画
-            maxTabNum: 15,              // 最大的tab打开数量
+            menuChildOpen: true,        // 是否默认展开菜单
+            loadingTime: 0,              // 初始化加载时间
+            pageAnim: true,              // iframe窗口动画
+            maxTabNum: 15,               // 最大的tab打开数量
         };
         miniAdmin.render(options);
 
@@ -155,7 +155,7 @@
 
         $('.login-out').on("click", function () {
             layer.msg('退出登录成功', function () {
-                window.location = '/login';
+                window.location = '/admin/login';
             });
         });
     });

@@ -33,8 +33,9 @@ server:
 app:
   home-info:
     title: 首页
-    href: welcome
+    href: /admin/welcome
   logo-info:
     title: 两只猫管理后台
-    image: images/logo.png
-    href: index
+    image: /images/logo.png
+    href: /admin/index
+debug: true

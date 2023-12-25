@@ -25,7 +25,7 @@ public class MenuController {
         this.menuService = menuService;
     }
 
-    @RequestMapping("/menu/manager")
+    @RequestMapping("/admin/menu/manager")
     @PreAuthorize("@authCheck.check('menu:list')")
     public String menuManagerView(){
         return "view/admin/menu/menu";
@@ -33,7 +33,7 @@ public class MenuController {
 
 
     @ResponseBody
-    @PostMapping("/api/menu/save")
+    @PostMapping("/api/admin/menu/save")
     @PreAuthorize("@authCheck.check('menu:add')")
     public Result<Void> saveMenu(@RequestBody
                                      @Validated(value = {ValidateGroup.Add.class})
@@ -43,7 +43,7 @@ public class MenuController {
     }
 
     @ResponseBody
-    @PostMapping("/api/menu/delete")
+    @PostMapping("/api/admin/menu/delete")
     @PreAuthorize("@authCheck.check('menu:del')")
     public Result<Void> deleteMenu(@NotNull @RequestBody LongListWrapper ids){
         menuService.deleteMenu(ids);
@@ -51,7 +51,7 @@ public class MenuController {
     }
 
     @ResponseBody
-    @PostMapping("/api/menu/edit")
+    @PostMapping("/api/admin/menu/edit")
     @PreAuthorize("@authCheck.check('menu:edit')")
     public Result<Void> editMenu(@RequestBody
                                      @Validated(value = {ValidateGroup.Edit.class})
@@ -61,7 +61,7 @@ public class MenuController {
     }
 
     @ResponseBody
-    @PostMapping("/api/menu/change/status")
+    @PostMapping("/api/admin/menu/change/status")
     @PreAuthorize("@authCheck.check('menu:edit')")
     public Result<Void> changeMenuStatus(@RequestBody
                                              @Validated(value = {ValidateGroup.StatusChange.class})
@@ -71,28 +71,28 @@ public class MenuController {
     }
 
 	@ResponseBody
-    @PostMapping("/api/menu/list")
+    @PostMapping("/api/admin/menu/list")
     @PreAuthorize("@authCheck.check('menu:list')")
     public Result<List<MenuVO>> getMenuList(@RequestBody MenuQuery query){
         return Result.ok(menuService.getMenus(query));
     }
 
     @ResponseBody
-    @PostMapping("/api/permission/list")
+    @PostMapping("/api/admin/permission/list")
     @PreAuthorize("@authCheck.check('role:add', 'role:edit')")
     public Result<List<MenuVO>> getAllMenus(){
         return Result.ok(menuService.getPermissions());
     }
 
     @ResponseBody
-    @PostMapping("/api/parent/menu")
+    @PostMapping("/api/admin/parent/menu")
     @PreAuthorize("@authCheck.check('menu:list')")
     public Result<List<MenuVO>> getMenuParentList(){
         return Result.ok(menuService.queryMenuOptions());
     }
 
     @ResponseBody
-    @PostMapping("/api/menu/detail")
+    @PostMapping("/api/admin/menu/detail")
     @PreAuthorize("@authCheck.check('menu:detail')")
     public Result<MenuVO> getMenuDetail(@RequestBody LongWrapper idWrapper){
         return Result.ok(MenuVO.fromMenu(menuService.getById(idWrapper.getKey())));

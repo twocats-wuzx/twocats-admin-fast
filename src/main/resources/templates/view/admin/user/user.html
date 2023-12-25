@@ -72,7 +72,7 @@
 
             table.render({
                 elem: '#user-table',
-                url: '/api/user/list',
+                url: '/api/admin/user/list',
                 method: 'post',
                 where: getWhereCondition(),
                 contentType: 'application/json',
@@ -187,7 +187,7 @@
                     updateBtn.removeClass('layui-hide')
                     addBtn.addClass('layui-hide')
                     $.ajax({
-                        url: '/api/user/detail',
+                        url: '/api/admin/user/detail',
                         type: 'POST',
                         contentType: 'application/json',
                         headers: {
@@ -236,7 +236,7 @@
             form.on('switch(form-status)', function (obj) {
                 const id = this.value;
                 $.ajax({
-                    url: '/api/user/change/status',
+                    url: '/api/admin/user/change/status',
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {
@@ -281,7 +281,7 @@
                 }
                 let data = form.val('add_or_update')
                 $.ajax({
-                    url: '/api/user/save',
+                    url: '/api/admin/user/save',
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {
@@ -318,7 +318,7 @@
             updateBtn.on('click', () => {
                 let data = form.val('add_or_update')
                 $.ajax({
-                    url: '/api/user/edit',
+                    url: '/api/admin/user/edit',
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {
@@ -364,7 +364,7 @@
                     btn: ['确定', '关闭']
                 }, function () {
                     $.ajax({
-                        url: '/api/user/delete',
+                        url: '/api/admin/user/delete',
                         type: 'POST',
                         contentType: 'application/json',
                         headers: {
@@ -436,7 +436,7 @@
             // 加载数据后重载穿梭框
             function getTransferData() {
                 $.ajax({
-                    url: '/api/role/transfer',
+                    url: '/api/admin/role/transfer',
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {

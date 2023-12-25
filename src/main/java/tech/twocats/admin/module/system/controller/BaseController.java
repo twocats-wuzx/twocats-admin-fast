@@ -1,6 +1,7 @@
 package tech.twocats.admin.module.system.controller;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
@@ -41,7 +42,8 @@ public class BaseController {
     /**
      * 首页
      */
-    @RequestMapping(value = {"/", "/index"})
+    @RequestMapping(value = {"/admin/index"})
+    //@PreAuthorize(value = "isAuthenticated()")
     public String index(@AuthenticationPrincipal UserDetailDTO userDetail, Model model) {
         model.addAttribute("name", StringUtils.hasLength(userDetail.getRealName())
                 ? userDetail.getRealName()
@@ -52,13 +54,13 @@ public class BaseController {
     /**
      * 首屏
      */
-    @RequestMapping(value = {"/welcome"})
+    @RequestMapping(value = {"/admin/welcome"})
     public String welcomeView() {
         return "view/dashboard/welcome";
     }
 
     @ResponseBody
-    @RequestMapping("/init")
+    @RequestMapping("/admin/init")
     public InitVO initSystem(@AuthenticationPrincipal UserDetailDTO userDetail){
         List<MenuVO> menus = menuService.getMenusByUserId(userDetail.getId());
         InitVO initVO = new InitVO();

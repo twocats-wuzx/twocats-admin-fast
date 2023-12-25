@@ -26,19 +26,22 @@ public class LoginController {
 
     private final IUserService userService;
     private final AuthenticationManager normalAuthenticationManager;
+    private final AuthenticationManager adminAuthenticationManager;
     private final SecurityContextRepository securityContextRepository;
     private final SecurityContextHolderStrategy securityContextHolderStrategy
             = SecurityContextHolder.getContextHolderStrategy();
 
     public LoginController(IUserService userService,
                            @Qualifier("normalAuthenticationManager") AuthenticationManager normalAuthenticationManager,
+                           @Qualifier("adminAuthenticationManager") AuthenticationManager adminAuthenticationManager,
                            SecurityContextRepository securityContextRepository) {
         this.userService = userService;
         this.normalAuthenticationManager = normalAuthenticationManager;
+        this.adminAuthenticationManager = adminAuthenticationManager;
         this.securityContextRepository = securityContextRepository;
     }
 
-    @RequestMapping("/login")
+    @RequestMapping("/admin/login")
     public String loginView(){
         return "login";
     }
@@ -72,14 +75,14 @@ public class LoginController {
      * @param loginRequest 登录请求参数
      */
     @ResponseBody
-    @PostMapping("/admin/api/login")
+    @PostMapping("/api/admin/login")
     public Result<Void> adminLogin(@RequestBody LoginRequest loginRequest,
                               HttpServletRequest request, HttpServletResponse response){
         UsernamePasswordAuthenticationToken token =
                 UsernamePasswordAuthenticationToken
                         .unauthenticated(loginRequest.getUsername(), loginRequest.getPassword());
         try {
-            Authentication authentication  = this.normalAuthenticationManager.authenticate(token);
+            Authentication authentication  = this.adminAuthenticationManager.authenticate(token);
             SecurityContext context = securityContextHolderStrategy.createEmptyContext();
             context.setAuthentication(authentication);
             securityContextHolderStrategy.setContext(context);

@@ -19,14 +19,14 @@ import java.io.IOException;
  */
 @Slf4j
 @Component
-public class AuthSuccessHandler implements AuthenticationSuccessHandler {
+public class AdminAuthSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
         log.info("==> principal={} authentication success", authentication.getName());
         response.reset();
-        response.sendRedirect("/");
+        response.sendRedirect("/admin/index");
     }
 
 }
