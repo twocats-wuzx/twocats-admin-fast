@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="layui-btn-container layui-col-md8">
-            <button class="layui-btn" lay-submit lay-filter="table-search">搜索</button>
+            <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="table-search">搜索</button>
             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
         </div>
     </form>
@@ -21,8 +21,8 @@
 
 <!-- 表格工具栏功能 -->
 <script type="text/html" id="table-tool-bar" th:fragment="table_tool_bar">
-    <button class="layui-btn table-bth layui-btn-normal" lay-event="add" >新增</button>
-    <button class="layui-btn table-bth layui-btn-danger" lay-event="delete" >删除</button>
+    <button class="layui-btn table-bth layui-btn-primary layui-border-blue" lay-event="add" >新增</button>
+    <button class="layui-btn table-bth layui-btn-primary layui-border-red" lay-event="delete" >删除</button>
 </script>
 
 <!-- 表格图标 -->
