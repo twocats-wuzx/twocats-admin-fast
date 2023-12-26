@@ -24,6 +24,10 @@
     margin: 5px 0;
 }
 
+.layui-form-label {
+    font-weight: bold;
+}
+
 /* 表格行选择点击颜色 */
 .layui-table-checked {
     background-color: #dbe5fb;
