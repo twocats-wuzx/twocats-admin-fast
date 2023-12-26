@@ -140,12 +140,11 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
                         .set(Menu::getAuthority, request.getAuthority())
                         .set(Menu::getHref, AppConstant.EMPTY_STRING)
                         .set(Menu::getIcon, AppConstant.EMPTY_STRING)
-                        .set(Menu::getTarget, null);
+                        .set(Menu::getTarget, AppConstant.EMPTY_STRING);
                 break;
             default:
                 break;
         }
-
         if (principal instanceof UserDetailDTO){
             UserDetailDTO userDetailDTO = (UserDetailDTO) principal;
             updateWrapper.set(Menu::getUpdateBy, userDetailDTO.getUsername());
