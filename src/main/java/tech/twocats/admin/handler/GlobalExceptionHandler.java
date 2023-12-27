@@ -43,17 +43,29 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = {AuthenticationException.class})
-    public ModelAndView authenticationE(AuthenticationException authenticationException){
+    public ModelAndView authenticationE(AuthenticationException authenticationException, HttpServletRequest request){
         log.error(authenticationException.getMessage(), authenticationException);
-        Map<String, Object> model = new HashMap<>();
-        return new ModelAndView("/login", model);
+        ModelAndView modelAndView = new ModelAndView();
+        if (request.getRequestURI().contains("/admin/")) {
+            modelAndView.setViewName("/view/system/admin-login");
+        }else {
+            modelAndView.setViewName("/web/login");
+        }
+        return modelAndView;
     }
 
     @ExceptionHandler(value = {AccessDeniedException.class})
-    public ModelAndView systemError(AccessDeniedException accessDeniedException){
-        log.error(accessDeniedException.getMessage(), accessDeniedException);
-        Map<String, Object> model = new HashMap<>();
-        return new ModelAndView("view/exception/500", model);
+    public ModelAndView systemError(AccessDeniedException accessDeniedException, HttpServletRequest request){
+
+        log.info(accessDeniedException.getMessage() + " url: " + request.getRequestURI());
+        ModelAndView modelAndView = new ModelAndView();
+        if (request.getHeader("Accept").contains("application/json")) {
+            modelAndView.setView(getMappingJackson2JsonView());
+            modelAndView.addObject(Result.fail(SystemError.ACCESS_DENIED_ERROR));
+        }else {
+            modelAndView.setViewName("view/exception/500");
+        }
+        return modelAndView;
     }
 
     @ExceptionHandler(Exception.class)

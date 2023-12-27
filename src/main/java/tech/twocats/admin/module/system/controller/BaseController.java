@@ -1,7 +1,6 @@
 package tech.twocats.admin.module.system.controller;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
@@ -40,10 +39,10 @@ public class BaseController {
     }
 
     /**
-     * 首页
+     * 后台首页
      */
     @RequestMapping(value = {"/admin/index"})
-    public String index(@AuthenticationPrincipal UserDetailDTO userDetail, Model model) {
+    public String adminIndexView(@AuthenticationPrincipal UserDetailDTO userDetail, Model model) {
         String name = userDetail.getUsername();
         if (StringUtils.hasLength(userDetail.getNickname())){
             name = userDetail.getNickname();
@@ -53,6 +52,14 @@ public class BaseController {
         }
         model.addAttribute("name", name);
         model.addAttribute("avatar", userDetail.getAvatar());
+        return "view/index";
+    }
+
+    /**
+     * 后台首页
+     */
+    @RequestMapping(value = {"/", "/index"})
+    public String indexView(@AuthenticationPrincipal UserDetailDTO userDetail, Model model) {
         return "index";
     }
 

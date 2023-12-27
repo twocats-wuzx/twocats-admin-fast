@@ -38,8 +38,13 @@ public class LoginController {
         this.securityContextRepository = securityContextRepository;
     }
 
+    @RequestMapping("/login")
+    public String webLoginView(){
+        return "web/login";
+    }
+
     @RequestMapping("/admin/login")
-    public String loginView(){
+    public String adminLoginView(){
         return "view/system/admin-login";
     }
 

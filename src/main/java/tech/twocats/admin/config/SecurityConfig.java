@@ -60,25 +60,13 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(
-                                AntPathRequestMatcher.antMatcher("/api/login"),
-                                AntPathRequestMatcher.antMatcher("/api/logout"),
-                                AntPathRequestMatcher.antMatcher("/error"),
-                                AntPathRequestMatcher.antMatcher("/druid/**"),
-                                AntPathRequestMatcher.antMatcher("/css/**"),
-                                AntPathRequestMatcher.antMatcher("/images/**"),
-                                AntPathRequestMatcher.antMatcher("/js/**"),
-                                AntPathRequestMatcher.antMatcher("/lib/**"),
-                                AntPathRequestMatcher.antMatcher("/favicon.ico")
-                        ).permitAll()
-                        .requestMatchers(
-                                mvcMatcherBuilder.pattern("/login"),
-                                mvcMatcherBuilder.pattern("/druid/**"),
-                                mvcMatcherBuilder.pattern("/404"),
-                                mvcMatcherBuilder.pattern("/403"),
-                                mvcMatcherBuilder.pattern("/505")
-                        ).permitAll()
-                        .anyRequest().authenticated()
+                                .requestMatchers(
+                                        AntPathRequestMatcher.antMatcher("/api/web/**")
+                                ).authenticated()
+                                .requestMatchers(
+                                        mvcMatcherBuilder.pattern("/setting/**")
+                                ).permitAll()
+                        /*.anyRequest().authenticated()*/
                 )
                 .sessionManagement(session -> session
                         .maximumSessions(2)
