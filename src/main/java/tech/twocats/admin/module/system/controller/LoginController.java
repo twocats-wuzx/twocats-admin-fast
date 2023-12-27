@@ -24,18 +24,15 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class LoginController {
 
-    private final IUserService userService;
     private final AuthenticationManager normalAuthenticationManager;
     private final AuthenticationManager adminAuthenticationManager;
     private final SecurityContextRepository securityContextRepository;
     private final SecurityContextHolderStrategy securityContextHolderStrategy
             = SecurityContextHolder.getContextHolderStrategy();
 
-    public LoginController(IUserService userService,
-                           @Qualifier("normalAuthenticationManager") AuthenticationManager normalAuthenticationManager,
+    public LoginController(@Qualifier("normalAuthenticationManager") AuthenticationManager normalAuthenticationManager,
                            @Qualifier("adminAuthenticationManager") AuthenticationManager adminAuthenticationManager,
                            SecurityContextRepository securityContextRepository) {
-        this.userService = userService;
         this.normalAuthenticationManager = normalAuthenticationManager;
         this.adminAuthenticationManager = adminAuthenticationManager;
         this.securityContextRepository = securityContextRepository;
