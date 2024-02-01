@@ -1,41 +1,34 @@
 spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    druid:
+      url: jdbc:mysql://localhost:3306/db_community_manager?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&nullCatalogMeansCurrent=true&rewriteBatchStatements=true
+      username: root
+      password: 8Dwj6W59m2LpFQ
+      initialSize: 5
+      minIdle: 10
+      maxActive: 20
+      maxWait: 60000
   jackson:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
     default-property-inclusion: non_null
-  thymeleaf:
-    cache: false
-    mode: HTML
-    encoding: UTF-8
   application:
-    name: twocats-admin
-  profiles:
-    active: prod
+    name: village-community-manager
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 20MB
-  devtools:
-    restart:
-      enabled: true
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
+  redis:
+    host: localhost
+    database: 0
+    port: 6379
+    password: 4hyZ7W*3oa&N&Q
 
 mybatis-plus:
   configuration:
     default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
-    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
-server:
-  port: 9000
-
-app:
-  home-info:
-    title: 首页
-    href: /admin/welcome
-  logo-info:
-    title: 两只猫管理后台
-    image: /images/logo.png
-    href: /admin/index
 debug: false

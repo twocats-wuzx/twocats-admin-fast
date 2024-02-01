@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="tech.twocats.admin.module.admin.mapper.RoleMenuMapper">
+<mapper namespace="com.community.manager.module.admin.mapper.RoleMenuMapper">
 
-    <resultMap id="BaseResultMap" type="tech.twocats.admin.module.admin.domain.entity.RoleMenu">
+    <resultMap id="BaseResultMap" type="com.community.manager.module.admin.domain.entity.RoleMenu">
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="roleId" column="role_id" jdbcType="INTEGER"/>
             <result property="menuId" column="menu_id" jdbcType="INTEGER"/>
@@ -21,9 +21,9 @@
     </sql>
 
 
-    <select id="getMenusByRoleIds" resultType="tech.twocats.admin.module.admin.domain.entity.Menu">
+    <select id="getMenusByRoleIds" resultType="com.community.manager.module.admin.domain.entity.Menu">
         select
-            <include refid="tech.twocats.admin.module.admin.mapper.MenuMapper.Menu_Column_List"/>
+            <include refid="com.community.manager.module.admin.mapper.MenuMapper.Menu_Column_List"/>
         from t_menu m
             <if test="!isSuperAdmin">
                 , t_role_menu rm, t_role r
