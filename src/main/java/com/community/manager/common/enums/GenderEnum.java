@@ -3,6 +3,7 @@ package com.community.manager.common.enums;
 
 import com.baomidou.mybatisplus.annotation.IEnum;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 import org.springframework.util.StringUtils;
 
@@ -34,6 +35,7 @@ public enum GenderEnum implements IEnum<String> {
     }
 
     @Override
+    @JsonValue
     public String getValue() {
         return name();
     }

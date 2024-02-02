@@ -1,7 +1,6 @@
-package com.community.manager.handler;
+package com.community.manager.auth;
 
 import com.alibaba.fastjson2.JSON;
-import com.community.manager.common.error.Error;
 import com.community.manager.common.error.SecurityError;
 import com.community.manager.common.model.vo.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 
 @Slf4j
@@ -34,8 +34,10 @@ public class AdminAccessDeniedHandler implements AccessDeniedHandler {
         log.info("==> access denied, message: {}", exception.getMessage());
         response.reset();
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(JSON.toJSONString(Result.fail(SecurityError.UN_ACCESS)));
+        response.getWriter().flush();
     }
 
 }

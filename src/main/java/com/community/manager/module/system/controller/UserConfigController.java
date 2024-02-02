@@ -1,12 +1,5 @@
 package com.community.manager.module.system.controller;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import com.community.manager.common.model.vo.Result;
 import com.community.manager.module.admin.domain.entity.User;
 import com.community.manager.module.admin.domain.vo.UserVO;
@@ -14,10 +7,16 @@ import com.community.manager.module.admin.service.IUserService;
 import com.community.manager.module.system.domain.dto.UserDetailDTO;
 import com.community.manager.module.system.domain.vo.RePasswordRequest;
 import com.community.manager.module.system.domain.vo.UserSettingRequest;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
-@Controller
+@RestController
 public class UserConfigController {
 
     private final IUserService userService;
@@ -26,15 +25,6 @@ public class UserConfigController {
         this.userService = userService;
     }
 
-    @RequestMapping("/admin/user/setting")
-    public String userSettingView(){
-        return "view/system/setting";
-    }
-
-    @RequestMapping("/admin/user/rePassword")
-    public String userRePasswordView(){
-        return "view/system/re-password";
-    }
 
     /**
      * 重置用户密码

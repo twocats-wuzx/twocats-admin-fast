@@ -22,8 +22,18 @@ public interface AppConstant {
      */
     String SUPER_ADMIN_ROLE_CODE = "super_admin";
 
-
+    /**
+     * 空字符串
+     */
     String EMPTY_STRING = "";
 
+    /**
+     * 冒号
+     */
+    String COLON = ":";
 
+    /**
+     * 请求携带的Key
+     */
+    String REQUEST_AUTH_KEY = "token";
 }

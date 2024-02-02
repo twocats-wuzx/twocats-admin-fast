@@ -1,9 +1,7 @@
 package com.community.manager.config;
 
-import com.community.manager.handler.AdminAccessDeniedHandler;
-import com.community.manager.handler.AdminAuthEntryPoint;
-import com.community.manager.handler.AdminAuthFailureHandler;
-import com.community.manager.handler.AdminAuthSuccessHandler;
+import com.community.manager.auth.*;
+import com.community.manager.module.system.service.impl.AdminUserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,10 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
 @EnableWebSecurity
@@ -53,38 +49,29 @@ public class SecurityConfig {
     @Bean
     @Order(200)
     public SecurityFilterChain normalFilterChain(HttpSecurity http,
-                                                 HandlerMappingIntrospector introspector,
-                                                 HttpSessionSecurityContextRepository httpSessionSecurityContextRepository) throws Exception {
-        MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
+                                                 RedisSecurityContextRepository redisSecurityContextRepository)
+            throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers(
-                                        AntPathRequestMatcher.antMatcher("/api/web/**")
-                                ).authenticated()
-                                .requestMatchers(
-                                        mvcMatcherBuilder.pattern("/setting/**")
-                                ).permitAll()
-                        /*.anyRequest().authenticated()*/
-                )
-                .sessionManagement(session -> session
-                        .maximumSessions(2)
-                        // 是否阻止达到最大会话数之后的再次登录
-                        .maxSessionsPreventsLogin(true)
-                        .expiredUrl("/login")
+                        .requestMatchers(
+                                AntPathRequestMatcher.antMatcher("/api/web/captcha")
+                        ).permitAll()
+                        .requestMatchers(
+                                AntPathRequestMatcher.antMatcher("/api/web/**")
+                        ).authenticated()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/api/logout")
-                        .logoutSuccessUrl("/api/login")
-                        .invalidateHttpSession(true)
+                        .logoutUrl("/api/web/logout")
                         .deleteCookies("JSESSIONID")
                 )
-                // 基于HttpSession的会话管理
+                .sessionManagement(AbstractHttpConfigurer::disable)
+                // 基于Redis的SpringSecurity管理
                 .securityContext(securityContext -> securityContext
                         .requireExplicitSave(true)
                         .securityContextRepository(new DelegatingSecurityContextRepository(
-                                httpSessionSecurityContextRepository
+                                redisSecurityContextRepository
                         ))
                 );
         return http.build();
@@ -93,13 +80,11 @@ public class SecurityConfig {
     @Bean
     @Order(100)
     public SecurityFilterChain adminFilterChain(HttpSecurity http,
-                                                HandlerMappingIntrospector introspector,
                                                 AdminAuthEntryPoint adminAuthEntryPoint,
                                                 AdminAccessDeniedHandler adminAccessDeniedHandler,
                                                 AdminAuthSuccessHandler adminAuthSuccessHandler,
                                                 AdminAuthFailureHandler adminAuthFailureHandler,
-                                                HttpSessionSecurityContextRepository httpSessionSecurityContextRepository) throws Exception {
-        MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
+                                                RedisSecurityContextRepository redisSecurityContextRepository) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
@@ -109,7 +94,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
                                 AntPathRequestMatcher.antMatcher("/api/admin/login"),
-                                AntPathRequestMatcher.antMatcher("/api/admin/logout")
+                                AntPathRequestMatcher.antMatcher("/api/admin/logout"),
+                                AntPathRequestMatcher.antMatcher("/api/admin/captcha")
                         ).permitAll()
                         .requestMatchers(
                                 AntPathRequestMatcher.antMatcher("/api/admin/**")
@@ -121,21 +107,15 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/api/admin/logout")
-                        .logoutSuccessUrl("/api/admin/login")
-                        .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                 )
                 // 基于HttpSession的会话管理
-                .sessionManagement(session -> session
-                        .maximumSessions(2)
-                        // 是否阻止达到最大会话数之后的再次登录
-                        .maxSessionsPreventsLogin(true)
-                        .expiredUrl("/admin/login")
-                )
+                .sessionManagement(AbstractHttpConfigurer::disable)
+                // 基于Redis的SpringSecurity管理
                 .securityContext(securityContext -> securityContext
                         .requireExplicitSave(true)
                         .securityContextRepository(new DelegatingSecurityContextRepository(
-                                httpSessionSecurityContextRepository
+                                redisSecurityContextRepository
                         ))
                 )
                 .httpBasic(Customizer.withDefaults())
@@ -160,7 +140,7 @@ public class SecurityConfig {
 
     @Bean(name = "adminAuthenticationManager")
     public AuthenticationManager adminAuthenticationManager(
-            @Qualifier("adminUserDetailServiceImpl") UserDetailsService userDetailsService,
+            AdminUserDetailServiceImpl userDetailsService,
             PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService);

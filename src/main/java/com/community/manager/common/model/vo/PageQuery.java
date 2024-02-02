@@ -9,12 +9,12 @@ public class PageQuery {
     /**
      * 分页大小
      */
-    private Integer size;
+    private Integer size = 20;
 
     /**
      * 当前页码
      */
-    private Integer current;
+    private Integer current = 1;
 
 
     public <T> IPage<T> getPage(){

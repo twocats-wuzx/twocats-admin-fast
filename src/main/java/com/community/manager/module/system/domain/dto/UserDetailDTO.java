@@ -1,5 +1,8 @@
 package com.community.manager.module.system.domain.dto;
 
+import com.alibaba.fastjson2.annotation.JSONField;
+import com.community.manager.handler.String2AuthoritiesDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -65,6 +68,7 @@ public class UserDetailDTO implements UserDetails {
      */
     private Boolean status;
 
+    @JsonDeserialize(using = String2AuthoritiesDeserializer.class)
     private List<SimpleGrantedAuthority> authorities;
 
     private UserDetailDTO(){

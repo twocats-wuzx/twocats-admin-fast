@@ -8,6 +8,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public class AuthExceptionUtil {
 
+    /**
+     * 根据异常获取错误类型
+     * @param exception 异常
+     * @param <T> 异常类型
+     * @return {@link ErrorType}
+     */
     public static <T extends AuthenticationException> ErrorType getErrorTypeByException(T exception){
         ErrorType errorType = SecurityError.AUTH_EXCEPTION;
         if (exception instanceof BadCredentialsException || exception instanceof UsernameNotFoundException){

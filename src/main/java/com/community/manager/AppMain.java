@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 @SpringBootApplication
 @MapperScan(basePackages = {"com.community.manager.module.admin.mapper"})
 public class AppMain {

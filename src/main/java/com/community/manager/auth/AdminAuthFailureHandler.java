@@ -1,4 +1,4 @@
-package com.community.manager.handler;
+package com.community.manager.auth;
 
 import com.alibaba.fastjson2.JSON;
 import com.community.manager.common.error.ErrorType;
@@ -14,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Component
@@ -35,7 +36,9 @@ public class AdminAuthFailureHandler implements AuthenticationFailureHandler {
         response.reset();
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.getWriter().write(JSON.toJSONString(Result.fail(errorType)));
+        response.getWriter().flush();
     }
 
 }
